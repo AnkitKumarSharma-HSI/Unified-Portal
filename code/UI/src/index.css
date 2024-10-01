@@ -1,0 +1,472 @@
+
+/* NAVBAR STYLING */
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Noto+Sans+JP:wght@100..900&display=swap');
+:root{
+  /* background-image: url(../public/background-image.jpg); */
+  background: whitesmoke;
+}
+/* Style the entire scrollbar */
+::-webkit-scrollbar {
+  width: 12px;  /* Width of the scrollbar */
+  height: 12px;  /* Height for horizontal scrollbar */
+}
+
+/* Style the scrollbar track (the background area) */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+/* Style the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background-color: #888;  /* Color of the thumb */
+  border-radius: 10px;  /* Rounded corners for the thumb */
+}
+
+/* Hover effect on the scrollbar thumb */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;  /* Darker color on hover */
+}
+
+
+*{
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+  font-family: "Gowun Batang", serif;
+  font-weight: 500;
+  font-style: normal;
+  }
+  
+  .link-button {
+  background-color: blue;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  }
+  
+  nav {
+    position: sticky;
+    top: 0;
+  background-color: #333;
+  /* background-color: #dd4c4c; */
+  padding: 10px 0;
+  padding: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  }
+  .companyLogo{
+    width: 136px;
+    position: absolute;
+    left: 24px;
+    top: 15px;
+  }
+  
+  ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  }
+  
+  li {
+  display: inline-block;
+  margin: 0 10px;
+  }
+  
+  a {
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  /* transition: text-decoration 0.3s ease; */
+  }
+  
+  a:hover {
+  /* background-color: #555; */
+  background-color: #000;
+  }
+  nav > ul > li > a:hover{
+    background-color: #333;
+  
+  }
+
+
+  @media only screen and (max-width: 600px) {
+  nav {
+  padding: 5px 0;
+  }
+  
+  li {
+  display: block;
+  margin: 10px 0;
+  }
+  }
+  
+  
+  
+  /* LOGIN STYLLING */
+  /* index.css */
+  .auth-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  /* border: 1px solid #ccc; */
+  box-shadow: 1px 5px 11px #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  }
+  
+  h2 {
+  margin-top: 0;
+  }
+  
+  .form-group {
+  margin-bottom: 15px;
+  }
+  
+  label {
+  display: block;
+  font-weight: bold;
+  }
+  
+  input[type="email"],
+  input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  }
+  
+  button {
+  display: block;
+  width: 150px;
+  margin: auto;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  }
+
+  
+  button:hover {
+  background-color: #0056b3;
+  }
+
+  @media only screen and (max-width: 600px) {
+  .auth-container {
+  padding: 10px;
+  margin: 20px auto;
+  }
+  
+  input[type="email"],
+  input[type="password"],
+  button {
+  padding: 8px;
+  }
+  }
+  .uploadBtn{
+    margin-left: -2px;
+    font-size: 30px;
+  }
+
+  
+  /* REGISTRATION STYLLING */
+  /* + */
+  /* update user */
+  
+  .auth-container {
+  max-width: 400px;
+  /* margin: 20px auto; */
+  margin: 50px auto;
+  padding: 20px;
+  /* border: 1px solid #ccc; */
+  box-shadow:1px 5px 11px #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  margin-bottom: 100px;
+  }
+
+  
+  .auth-container h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+  }
+  
+  .form-group {
+  margin-bottom: 15px;
+  }
+  
+  .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 16px;
+  }
+  
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 16px;
+  }
+  
+  button[type="submit"] {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  background-color: #333;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  /* margin-bottom: 50px; */
+  }
+  
+  button[type="submit"]:hover {
+  background-color: #000000;
+  }
+  
+  
+  
+  /* FOOTER STYKLING */
+  .footer{
+  background-color: black;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  }
+  
+  
+  
+  
+  
+  
+  /* PAGE NOT FOUND STYLING */
+  /* index.css */
+  .not-found-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  text-align: center;
+  }
+  
+  h2 {
+  color: #d9534f;
+  }
+  
+  p {
+  color: #333;
+  }
+  
+  @media only screen and (max-width: 600px) {
+  .not-found-container {
+  padding: 10px;
+  }
+  }
+  
+  /* ERROR STYLING */
+  .error-message {
+  color: red;
+  text-align: center;
+  }
+  
+  
+  
+  /*USER MANAGEMENT PAGE*/
+  .user-management-container {
+  max-width: 800px;
+  margin: 0px auto 60px auto;
+  padding: 20px;
+  
+  }
+  
+  h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+  }
+  
+  table {
+  width: 100%;
+  border-collapse: collapse;
+  }
+  
+  th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  }
+  
+  th {
+  background-color: #f2f2f2;
+  }
+  
+  tr:nth-child(even) {
+  background-color: #f9f9f9;
+  }
+  
+  tr:hover {
+  background-color: #f2f2f2;
+  }
+  
+  button {
+  padding: 10px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  }
+  
+  .reg-button {
+  padding: 15px;
+  margin: 10px auto;
+  }
+  
+  button:hover {
+  background-color: #000;
+  }
+  
+  .delete-button {
+  background-color: rgb(221, 76, 76);
+  color: white;
+  margin-bottom: 10px;
+  font-weight: 400;
+  }
+  .delete-button:hover{
+    background-color: red;
+  }
+  
+  
+  /**PROFILE STYLING"
+  /* index.css */
+  
+  .profile-page-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  }
+  
+  .profile-page-container h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+  }
+  
+  .profile-page-container p {
+  margin-bottom: 10px;
+  font-size: 16px;
+  }
+  
+  .profile-page-container button {
+  padding: 10px 20px;
+  
+  border: none;
+  border-radius: 3px;
+  background-color: #333;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  }
+  
+  .profile-page-container button:hover {
+  background-color: #000;
+  }
+  .profile-page-btn-container{
+    /* border:1px solid black; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+    
+  }
+  .profile-page-btn-container  button{
+    width: 140px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .downloadJSONBtn{
+    display: block;
+    font-size: 25px;
+    width: 191px !important;
+  }
+  .viewJsonContainer{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 100;
+    /* border-radius: 10px; */
+    background-color: white;
+    /* border:2px solid #aaaa; */
+    box-shadow: 2px 2px 4px #bfbfbf;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* padding: 100px; */
+    /* overflow: auto; */
+
+    /* overflow-y: auto; */
+
+  }
+  .viewJSONChild{
+    width: 90%;
+    height: 80%;
+    background-color: white;
+    overflow: auto;
+    /* borde: 1px solid #aaaa; */
+    box-shadow: 0px 0px 3px #aaaa;
+    border-radius: 10px;
+    padding: 10px;
+  }
+.closeJSONView{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 80px;
+}
+.downloadJSONBtn{
+  width: 152px !important;
+} 
+.copyJsonBtn{
+  position: absolute;
+  top: 5px;
+  right: 105px;
+  width: 120px;
+}
+.profileUserName{
+  margin-left: 0px;
+}
+svg{
+  margin-right: 5px;
+  /* font-size: 20px; */
+}
+.uploadBtn{
+  font-size: 25px !important;
+}
+.logOutBtn{
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
