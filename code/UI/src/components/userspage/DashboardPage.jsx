@@ -1,7 +1,10 @@
 import React from 'react';
 function DashboardPage(){
     return(<>
-        <p>Dashboard Page</p>
+    <div className="dashboardPageContainer">
+            <p>Dashboard Page</p>
+    </div>
+        
     </>);
 }
 export default DashboardPage;

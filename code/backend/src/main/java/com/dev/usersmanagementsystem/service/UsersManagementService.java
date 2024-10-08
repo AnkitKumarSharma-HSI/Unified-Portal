@@ -1,15 +1,20 @@
 package com.dev.usersmanagementsystem.service;
 
+import com.dev.usersmanagementsystem.App;
+import com.dev.usersmanagementsystem.config.DataSourceConfig;
 import com.dev.usersmanagementsystem.dto.ReqRes;
 import com.dev.usersmanagementsystem.entity.OurUsers;
 import com.dev.usersmanagementsystem.repository.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +30,14 @@ public class UsersManagementService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private DataSourceConfig dataSourceConfig;
+    @Autowired
+    private DynamicDataSource dynamicDataSource;
 
 
     public ReqRes register(ReqRes registrationRequest){
@@ -32,12 +45,16 @@ public class UsersManagementService {
 
         try {
             OurUsers ourUser = new OurUsers();
+            String userDb=registrationRequest.getName().toUpperCase();
             ourUser.setEmail(registrationRequest.getEmail());
             ourUser.setCity(registrationRequest.getCity());
             ourUser.setRole(registrationRequest.getRole());
             ourUser.setName(registrationRequest.getName());
             ourUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+            ourUser.setUserDbName(userDb);
             OurUsers ourUsersResult = usersRepo.save(ourUser);
+            String createDatabaseQuery = "CREATE DATABASE " + userDb;
+            jdbcTemplate.execute(createDatabaseQuery);
             if (ourUsersResult.getId()>0) {
                 resp.setOurUsers((ourUsersResult));
                 resp.setMessage("User Saved Successfully");
@@ -61,6 +78,12 @@ public class UsersManagementService {
             var user = usersRepo.findByEmail(loginRequest.getEmail()).orElseThrow();
             var jwt = jwtUtils.generateToken(user);
             var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+//            if(user!=null){
+//                UserContext.setCurrentUserDatabase(user.getUserDbName());
+//
+//                // Add new data source for the user's database
+//                dynamicDataSource.addDataSource(user.getUserDbName(),dataSource);
+//            }
             response.setStatusCode(200);
             response.setToken(jwt);
             response.setRole(user.getRole());
@@ -162,6 +185,23 @@ public class UsersManagementService {
         return usersRepo.findById(id)
                 .map(entity -> ResponseEntity.ok(entity.getJsonFile()))
                 .orElse(ResponseEntity.notFound().build());
+    }
+    public ResponseEntity<String> executeJsonById(int id){
+        return usersRepo.findById(id)
+                .map(entity -> {
+                    // Assuming getJsonFile() retrieves the JSON content as a String
+                    String jsonContent = entity.getJsonFile();
+                    App obj = new App();
+                    try {
+                        obj.setup();
+                        obj.runCode(jsonContent);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    return ResponseEntity.ok(jsonContent);
+                })
+                .orElse(ResponseEntity.notFound().build());
+
     }
     public ReqRes fileUpload(String json,String id) throws Exception{
         ReqRes reqRes=new ReqRes();

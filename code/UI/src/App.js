@@ -22,10 +22,17 @@ function App() {
         <Navbar />
         <div className="content">
           <Routes>
+            {
+              UserService.userOnly() && (
+                <>
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/dashboard" element={<DashboardPage/>}/>
+                </>
+              )
+            }
             <Route exact path="/" element={<LoginPage />} />
             <Route exact path="/login" element={<LoginPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/dashboard" element={<DashboardPage/>}/>
+
 
 
             {/* Check if user is authenticated and admin before rendering admin-only routes */}

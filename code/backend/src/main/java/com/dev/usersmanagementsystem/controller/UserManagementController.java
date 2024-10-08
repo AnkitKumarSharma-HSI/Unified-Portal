@@ -1,5 +1,6 @@
 package com.dev.usersmanagementsystem.controller;
 
+import com.dev.usersmanagementsystem.App;
 import com.dev.usersmanagementsystem.dto.ReqRes;
 import com.dev.usersmanagementsystem.entity.OurUsers;
 import com.dev.usersmanagementsystem.service.UsersManagementService;
@@ -11,13 +12,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
+
 @RestController
 public class UserManagementController {
     @Autowired
     private UsersManagementService usersManagementService;
 
     @PostMapping("/auth/register")
-    public ResponseEntity<ReqRes> regeister(@RequestBody ReqRes reg){
+    public ResponseEntity<ReqRes> register(@RequestBody ReqRes reg){
         return ResponseEntity.ok(usersManagementService.register(reg));
     }
 
@@ -64,6 +68,10 @@ public class UserManagementController {
     @GetMapping("/api/json/{userId}")
     public ResponseEntity<String> getJsonById(@PathVariable Integer userId) {
         return usersManagementService.getJSONById(userId);
+    }
+    @GetMapping("/api/executejson/{userId}")
+    public ResponseEntity<String> executeJsonById(@PathVariable Integer userId) {
+        return usersManagementService.executeJsonById(userId);
     }
 
     @PostMapping("/api/upload/json")

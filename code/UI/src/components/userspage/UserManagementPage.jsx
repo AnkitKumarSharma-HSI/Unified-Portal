@@ -2,6 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import UserService from '../service/UserService';
+import { MdDelete } from "react-icons/md";
+import { RxUpdate } from "react-icons/rx";
+import { FiEdit } from "react-icons/fi";
+import { AiOutlineUserAdd } from "react-icons/ai";
+
+
+
 
 function UserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -43,11 +50,13 @@ function UserManagementPage() {
   return (
     <div className="user-management-container">
       {/* <h2>Users </h2> */}
-      <button className='reg-button'> <Link to="/register">Add User</Link></button>
+      <button className='reg-button'> <Link to="/register"><AiOutlineUserAdd /> Add
+
+</Link></button>
       <table>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Client ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Actions</th>
@@ -60,9 +69,11 @@ function UserManagementPage() {
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>
-                <button className='delete-button' onClick={() => deleteUser(user.id)}>Delete</button>
-                <button><Link to={`/update-user/${user.id}`}>
-                  Update
+                <button className='delete-button' onClick={() => deleteUser(user.id)}><MdDelete />
+</button>
+                <button className='update-btn-user'><Link to={`/update-user/${user.id}`}>
+                <FiEdit />
+
                 </Link>
                 </button>
               </td>

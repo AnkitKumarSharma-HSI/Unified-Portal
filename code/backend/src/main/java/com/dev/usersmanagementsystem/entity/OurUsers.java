@@ -29,6 +29,9 @@ public class OurUsers implements UserDetails {
     @Column(columnDefinition = "json")
     private String previousJsonFile;
 
+    @Column
+    private String userDbName;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));

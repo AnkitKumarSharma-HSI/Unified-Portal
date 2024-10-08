@@ -12,7 +12,7 @@
 	<artifactId>usersmanagementsystem</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>usersmanagementsystem</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Unified Portal</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -29,6 +29,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>5.4.1</version>
+		</dependency>
+
+
+
 
 		<dependency>
 			<groupId>com.mysql</groupId>

@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import UserService from '../service/UserService';
 import { useNavigate } from 'react-router-dom';
+import { FaClipboard } from "react-icons/fa";
+import { FaRegClipboard } from "react-icons/fa";
+// import { FaClipboard } from "react-icons/fa6";
+
+
+
 
 function RegistrationPage() {
     const navigate = useNavigate();
@@ -45,7 +51,8 @@ function RegistrationPage() {
 
     return (
         <div className="auth-container">
-            <h2>Registration</h2>
+            <h2><FaClipboard /> Fill Details
+            </h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Name:</label>

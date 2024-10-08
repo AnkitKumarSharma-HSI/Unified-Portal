@@ -69,6 +69,20 @@ class UserService{
             alert('File upload failed');
           }
     }
+    static async executeJson(userId,token){
+        console.log(userId+" "+token);
+        try{
+            const response=await axios.get(`${UserService.BASE_URL}/api/executejson/${userId}`,{
+                headers: {Authorization: `Bearer ${token}`}
+            });
+           return response;
+
+        }catch(error){
+            console.log("Error while fetching json data",error);
+            alert("Json Execution Failed");
+        }
+
+    }
     static async getJsonData(userId,token){
         try{
             const response=await axios.get(`${UserService.BASE_URL}/api/json/${userId}`,{
@@ -142,6 +156,9 @@ class UserService{
 
     static adminOnly(){
         return this.isAuthenticated() && this.isAdmin();
+    }
+    static userOnly(){
+        return this.isAuthenticated();
     }
 
 }

@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 import UserService from "../service/UserService";
 import Navbar from "../common/Navbar";
 import { PiUserFocusFill } from "react-icons/pi";
+// import { LiaUserCircle } from "react-icons/lia";
+import { HiMiniUserCircle } from "react-icons/hi2";
+import { FaHouseUser } from "react-icons/fa";
+
+
 
 
 
@@ -40,8 +45,10 @@ const handleSubmit = async (e) => {
 
 
     return(
-        <div className="auth-container">
-            <h2><PiUserFocusFill />
+        <div className="auth-container auth-container-login">
+            <h2><HiMiniUserCircle />
+
+
 </h2>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit}>
