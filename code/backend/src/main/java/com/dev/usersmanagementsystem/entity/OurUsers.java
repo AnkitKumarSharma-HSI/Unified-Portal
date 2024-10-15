@@ -23,14 +23,17 @@ public class OurUsers implements UserDetails {
     private String password;
     private String city;
     private String role;
-    @Column(columnDefinition = "json")
-    private String jsonFile;
+//    @Column(columnDefinition = "json")
+//    private String jsonFile;
+//
+//    @Column(columnDefinition = "json")
+//    private String previousJsonFile;
 
-    @Column(columnDefinition = "json")
-    private String previousJsonFile;
+//    @Column
+//    private String userDbName;
 
-    @Column
-    private String userDbName;
+    @OneToMany(mappedBy = "user_id")
+    private List<Scenario> scenarios;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,43 +1,67 @@
 package com.dev.usersmanagementsystem.service;
 
 import com.dev.usersmanagementsystem.App;
-import com.dev.usersmanagementsystem.config.DataSourceConfig;
 import com.dev.usersmanagementsystem.dto.ReqRes;
+import com.dev.usersmanagementsystem.entity.ExecutionTime;
 import com.dev.usersmanagementsystem.entity.OurUsers;
+import com.dev.usersmanagementsystem.entity.Scenario;
+import com.dev.usersmanagementsystem.entity.Schedule;
+import com.dev.usersmanagementsystem.repository.ExecutionTimeRepo;
+import com.dev.usersmanagementsystem.repository.ScenarioRepo;
+import com.dev.usersmanagementsystem.repository.ScheduleRepo;
 import com.dev.usersmanagementsystem.repository.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Service
 public class UsersManagementService {
 
     @Autowired
     private UsersRepo usersRepo;
+
+    @Autowired
+    private ScenarioRepo scenarioRepo;
+
+    @Autowired
+    private ScheduleRepo scheduleRepo;
+
+    @Autowired
+    private ExecutionTimeRepo executionTimeRepo;
+
     @Autowired
     private JWTUtils jwtUtils;
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private DataSource dataSource;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private DataSourceConfig dataSourceConfig;
-    @Autowired
-    private DynamicDataSource dynamicDataSource;
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
 
     public ReqRes register(ReqRes registrationRequest){
@@ -45,16 +69,16 @@ public class UsersManagementService {
 
         try {
             OurUsers ourUser = new OurUsers();
-            String userDb=registrationRequest.getName().toUpperCase();
+//            String userDb=registrationRequest.getName().toUpperCase();
             ourUser.setEmail(registrationRequest.getEmail());
             ourUser.setCity(registrationRequest.getCity());
             ourUser.setRole(registrationRequest.getRole());
             ourUser.setName(registrationRequest.getName());
             ourUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-            ourUser.setUserDbName(userDb);
+//            ourUser.setUserDbName(userDb);
             OurUsers ourUsersResult = usersRepo.save(ourUser);
-            String createDatabaseQuery = "CREATE DATABASE " + userDb;
-            jdbcTemplate.execute(createDatabaseQuery);
+//            String createDatabaseQuery = "CREATE DATABASE " + userDb;
+//            jdbcTemplate.execute(createDatabaseQuery);
             if (ourUsersResult.getId()>0) {
                 resp.setOurUsers((ourUsersResult));
                 resp.setMessage("User Saved Successfully");
@@ -130,7 +154,7 @@ public class UsersManagementService {
         ReqRes reqRes = new ReqRes();
 
         try {
-            List<OurUsers> result = usersRepo.findAll();
+            List<OurUsers> result = usersRepo.findAllUsers();
             if (!result.isEmpty()) {
                 reqRes.setOurUsersList(result);
                 reqRes.setStatusCode(200);
@@ -181,42 +205,53 @@ public class UsersManagementService {
         }
         return reqRes;
     }
-    public ResponseEntity<String> getJSONById(int id){
-        return usersRepo.findById(id)
-                .map(entity -> ResponseEntity.ok(entity.getJsonFile()))
-                .orElse(ResponseEntity.notFound().build());
-    }
-    public ResponseEntity<String> executeJsonById(int id){
-        return usersRepo.findById(id)
-                .map(entity -> {
-                    // Assuming getJsonFile() retrieves the JSON content as a String
-                    String jsonContent = entity.getJsonFile();
-                    App obj = new App();
-                    try {
-                        obj.setup();
-                        obj.runCode(jsonContent);
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-                    return ResponseEntity.ok(jsonContent);
-                })
-                .orElse(ResponseEntity.notFound().build());
-
-    }
-    public ReqRes fileUpload(String json,String id) throws Exception{
+//    public ResponseEntity<String> getJSONById(int id){
+//        return usersRepo.findById(id)
+//                .map(entity -> ResponseEntity.ok(entity.getJsonFile()))
+//                .orElse(ResponseEntity.notFound().build());
+//    }
+//    public ResponseEntity<String> executeJsonById(int id){
+//        return usersRepo.findById(id)
+//                .map(entity -> {
+//                    // Assuming getJsonFile() retrieves the JSON content as a String
+//                    String jsonContent = entity.getJsonFile();
+//                    App obj = new App();
+//                    try {
+//                        obj.setup();
+//                        obj.runCode(jsonContent);
+//                    } catch (Exception e) {
+//                        System.out.println(e);
+//                    }
+//                    return ResponseEntity.ok(jsonContent);
+//                })
+//                .orElse(ResponseEntity.notFound().build());
+//
+//    }
+    public ReqRes fileUpload(String json,String id,String code,String desc) throws Exception{
         ReqRes reqRes=new ReqRes();
         try{
             Optional<OurUsers> userOptional = usersRepo.findById(Integer.parseInt(id));
             if(userOptional.isPresent()){
                 OurUsers existingUser = userOptional.get();
-                if(existingUser.getJsonFile()!=null && !existingUser.getJsonFile().isEmpty()){
-                    existingUser.setPreviousJsonFile(existingUser.getJsonFile());
-                    existingUser.setJsonFile(json);
-                }else{
-                    existingUser.setJsonFile(json);
-                }
-                OurUsers savedUser = usersRepo.save(existingUser);
-                reqRes.setOurUsers(savedUser);
+                List<Scenario> scenarioList=existingUser.getScenarios();
+                Scenario scenario = new Scenario();
+                scenario.setUser_id(existingUser.getId());
+                scenario.setJsonFile(json);
+                scenario.setCode(code);
+                scenario.setDescription(desc);
+                scenario.setStatus("Active");
+                scenarioList.add(scenario);
+
+//                if(existingUser.getJsonFile()!=null && !existingUser.getJsonFile().isEmpty()){
+//                    existingUser.setPreviousJsonFile(existingUser.getJsonFile());
+//                    existingUser.setJsonFile(json);
+//                }else{
+//                    existingUser.setJsonFile(json);
+//                }
+                scenarioRepo.saveAll(scenarioList);
+//                existingUser.setScenarios(scenarioList);
+//                OurUsers savedUser = usersRepo.save(existingUser);
+//                reqRes.setOurUsers(savedUser);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("User updated successfully");
             }
@@ -282,5 +317,79 @@ public class UsersManagementService {
         }
         return reqRes;
 
+    }
+    public ReqRes saveScheduleInfo(String userId,String scenarioId,String frequency,String startDateTime,String endDateTime){
+        ReqRes reqRes = new ReqRes();
+        LocalDateTime startLocalDateTime = LocalDateTime.parse(startDateTime, formatter);
+        LocalDateTime endLocalDateTime = LocalDateTime.parse(endDateTime, formatter);
+
+        long startTimeInMilli = startLocalDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        long endTimeInMilli = endLocalDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+
+        try{
+            Optional<Scenario> scenarioOptional = scenarioRepo.findScenarioByScenario_idAndUser_id(Integer.parseInt(scenarioId),Integer.parseInt(userId));
+            if(scenarioOptional.isPresent()){
+                Scenario scenario = scenarioOptional.get();
+                Schedule schedule = new Schedule();
+                schedule.setSchedule_id(Integer.parseInt(scenarioId));
+                schedule.setFrequency(Integer.parseInt(frequency));
+                schedule.setStartTimeInMillis(startTimeInMilli);
+                schedule.setEndTimeInMillis(endTimeInMilli);
+                schedule.setUserId(scenario.getUser_id());
+                scheduleRepo.save(schedule);
+                List<ExecutionTime> executionTimes = new ArrayList<>();
+                long frequencyInMillis = (long) Integer.parseInt(frequency) * 60 * 1000;
+                while (startTimeInMilli <= endTimeInMilli) {
+                    ExecutionTime executionTime = new ExecutionTime();
+                    executionTime.setStartTimeInMillis(startTimeInMilli);
+                    executionTime.setScenarioId(Integer.parseInt(scenarioId));
+                    executionTime.setUserId(Integer.parseInt(userId));
+                    executionTimes.add(executionTime);
+                    startTimeInMilli += frequencyInMillis;
+                }
+                executionTimeRepo.saveAll(executionTimes);
+                scenario.setSchedule(schedule);
+                scenarioRepo.save(scenario);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("successful");
+
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occured while saving schedule: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return reqRes;
+    }
+    @Scheduled(fixedRate = 60000)
+    public void scheduleExecution() {
+        Long currentTimeInMillis = Instant.now().toEpochMilli()+19800000;
+        Instant instant = Instant.ofEpochMilli(currentTimeInMillis);
+
+        ZonedDateTime utcDateTime = instant.atZone(ZoneId.of("UTC"));
+        utcDateTime=utcDateTime.withSecond(0).withNano(0);
+
+        long utcMilliseconds = utcDateTime.toInstant().toEpochMilli();
+
+        System.out.println("Hello==="+utcMilliseconds);
+        List<ExecutionTime> executionTimes = executionTimeRepo.findByStartTimeInMillis(utcMilliseconds);
+        System.out.println("Execution time"+ executionTimes);
+        for (ExecutionTime executionTime : executionTimes) {
+            Optional<Scenario> scenario = scenarioRepo.findScenarioByScenario_idAndUser_id(executionTime.getScenarioId(), executionTime.getUserId());
+            System.out.println("New scenario"+scenario);
+            if(scenario.isPresent()){
+                String jsonContent=scenario.get().getJsonFile();
+                App obj = new App();
+                try {
+                        obj.setup();
+                        obj.runCode(jsonContent);
+                } catch (Exception e) {
+                        System.out.println("Exception occurred while executing json"+e);
+                }
+                System.out.println("Time match"+scenario.get().getJsonFile());
+            }
+
+        }
     }
 }

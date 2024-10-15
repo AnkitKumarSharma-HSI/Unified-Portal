@@ -65,17 +65,19 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.deleteUser(userId));
     }
 
-    @GetMapping("/api/json/{userId}")
-    public ResponseEntity<String> getJsonById(@PathVariable Integer userId) {
-        return usersManagementService.getJSONById(userId);
-    }
-    @GetMapping("/api/executejson/{userId}")
-    public ResponseEntity<String> executeJsonById(@PathVariable Integer userId) {
-        return usersManagementService.executeJsonById(userId);
-    }
+//    @GetMapping("/api/json/{userId}")
+//    public ResponseEntity<String> getJsonById(@PathVariable Integer userId) {
+//        return usersManagementService.getJSONById(userId);
+//    }
+//    @GetMapping("/api/executejson/{userId}")
+//    public ResponseEntity<String> executeJsonById(@PathVariable Integer userId) {
+//        return usersManagementService.executeJsonById(userId);
+//    }
 
     @PostMapping("/api/upload/json")
-    public ResponseEntity<String> uploadJsonFile(@RequestParam("file") MultipartFile file, @RequestParam("id") String id) {
+    public ResponseEntity<String> uploadJsonFile(@RequestParam("file") MultipartFile file, @RequestParam("id") String id,@RequestParam("code") String code,@RequestParam("desc") String desc) {
+        System.out.println(id+" "+code+" "+desc );
+
         if (file.isEmpty()) {
             return new ResponseEntity<>("File is empty. Kindly select a different file and try again. Thanks", HttpStatus.BAD_REQUEST);
         }
@@ -85,8 +87,7 @@ public class UserManagementController {
             String jsonContent = new String(file.getBytes());
 
             // Process the file as needed (e.g., save it to a directory, process the content, etc.)
-            System.out.println("Uploaded JSON Content: " + jsonContent);
-            ReqRes response=usersManagementService.fileUpload(jsonContent,id);
+            ReqRes response=usersManagementService.fileUpload(jsonContent,id,code,desc);
             // Optionally, save the file to the server or process it
             // Files.write(Paths.get("path/to/save/file.json"), file.getBytes());
 
@@ -97,6 +98,16 @@ public class UserManagementController {
             return new ResponseEntity<>("Error processing the file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PostMapping("/api/schedule/add")
+    public ResponseEntity<ReqRes> addSchedule(@RequestParam("scenarioId")String scenarioId,@RequestParam("frequency") String frequency,@RequestParam("sdt") String sdt,@RequestParam("edt") String edt,@RequestParam("userId") String userId){
+        try{
+            ReqRes response=usersManagementService.saveScheduleInfo(userId,scenarioId,frequency,sdt,edt);
+            return new ResponseEntity<>(response,HttpStatus.OK);
 
+        } catch (Exception e) {
+            System.out.println("Error occurred while adding  schedule"+e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

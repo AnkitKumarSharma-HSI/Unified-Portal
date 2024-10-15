@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request-> request.requestMatchers("/auth/**", "/public/**").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/user/**").hasAnyAuthority("USER")
-                        .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER").requestMatchers("/api/json/**").permitAll().requestMatchers("/api/executejson/**").permitAll()
+                        .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER").requestMatchers("/api/json/**").permitAll().requestMatchers("/api/executejson/**").permitAll().requestMatchers("/api/schedule/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager->manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(

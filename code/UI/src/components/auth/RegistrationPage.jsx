@@ -20,7 +20,9 @@ function RegistrationPage() {
     });
 
     const handleInputChange = (e) => {
+        console.log(e.target.value);
         const { name, value } = e.target;
+
         setFormData({ ...formData, [name]: value });
     };
 
@@ -68,7 +70,12 @@ function RegistrationPage() {
                 </div>
                 <div className="form-group">
                     <label>Role:</label>
-                    <input type="text" name="role" value={formData.role} onChange={handleInputChange} placeholder="Enter your role" required />
+                    <select name="role" id="role" onChange={handleInputChange} required>
+                        <option value="" disabled selected>--Select</option>
+                        <option value="USER">USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                    {/* <input type="text" name="role" value={formData.role} onChange={handleInputChange} placeholder="Enter your role" required /> */}
                 </div>
                 <div className="form-group">
                     <label>City:</label>

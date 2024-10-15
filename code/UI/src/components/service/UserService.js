@@ -29,7 +29,9 @@ class UserService{
         try{
             const response = await axios.get(`${UserService.BASE_URL}/admin/get-all-users`, 
             {
-                headers: {Authorization: `Bearer ${token}`}
+                headers: {Authorization: `Bearer ${token}`,
+                    'Cache-Control': 'no-cache'
+                }
             })
             return response.data;
         }catch(err){
@@ -68,6 +70,23 @@ class UserService{
             console.error('Error uploading the file', error);
             alert('File upload failed');
           }
+    }
+    static async addSchedule(formData,token){
+        try{
+            const response=await axios.post(`${UserService.BASE_URL}/api/schedule/add`, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            alert("Schedule added Successfully.");
+            console.log(response.data);
+            return response.data;
+
+        }catch(error){
+            console.log("Error while adding schedule",error);
+            alert("Add Schedule Failed");
+        }
     }
     static async executeJson(userId,token){
         console.log(userId+" "+token);

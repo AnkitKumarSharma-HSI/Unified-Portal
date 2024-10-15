@@ -70,7 +70,11 @@ function UpdateUser() {
         </div>
         <div className="form-group">
           <label>Role:</label>
-          <input type="text" name="role" value={userData.role} onChange={handleInputChange} />
+          <select name="role" id="role" onChange={handleInputChange} required>
+                        <option value="" disabled selected>--Select</option>
+                        <option value="USER">USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
         </div>
         <div className="form-group">
           <label>City:</label>
