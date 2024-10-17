@@ -22,6 +22,11 @@ import { RiCalendarScheduleFill } from "react-icons/ri";
 import { LuFileJson2 } from "react-icons/lu";
 import { TbFileDescription } from "react-icons/tb";
 import { BsStopCircle } from "react-icons/bs";
+import { FiDownload } from "react-icons/fi";
+import { BsFiletypeJson } from "react-icons/bs";
+import { BsSave2 } from "react-icons/bs";
+import { RxResume } from "react-icons/rx";
+import { FaRegPauseCircle } from "react-icons/fa";
 
 
 
@@ -45,6 +50,9 @@ function ProfilePage() {
   const[frequencey,setFrequency]=useState(0);
   const[startDateTime,setStartDateTime]=useState("");
   const[endDateTime,setEndDateTime]=useState("");
+  const[scheduleError,setScheduleError]=useState("");
+  const[stopVisible,setStopVisible]=useState(false);
+
   const[scenarioId,setScenarioId]=useState(0);//scenario id when user is clicking on the schedule button
 
 
@@ -172,6 +180,12 @@ function ProfilePage() {
   };
   const handleScheduleSumbit=async (e)=>{
     e.preventDefault();
+    // if(frequencey<=2){
+    //   setScheduleError("Frequency should be positive and more than 2 minutes");
+    //   return;
+
+    // }
+
     console.log("Frequency"+" "+frequencey+" "+startDateTime+" "+endDateTime+" scenario_id "+scenarioId+" "+id);
     //addSchedule
     const formData = new FormData();
@@ -209,6 +223,33 @@ function ProfilePage() {
 
   return modifiedDateString;
   
+  };
+  const handleStopAction=async(sId,e,status)=>{
+    e.preventDefault();
+    console.log("status"+status);
+
+    let state=status;
+    if(state==="Active"){
+      state="Inactive";
+    }else if(state==="Inactive"){
+      state="Active";
+    }
+
+    const formData = new FormData();
+    formData.append("scenarioId", sId);
+    formData.append("userId", id);
+    formData.append("state",state);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await UserService.stopResumeScheduleForScenario(formData, token);
+      console.log(response);
+      if(response.data.statusCode==200){
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error uploading the stopping/resuming execution", error);
+    }
+
   }
 
   return (
@@ -237,8 +278,9 @@ function ProfilePage() {
                 <br />
                 <label htmlFor="endDateTimeInput">End Date and Time:</label>
                 <input type="datetime-local" name="endDateTimeInput" id="endDateTimeInput"  onChange={(e)=>{setEndDateTime(e.target.value)}}/>
+                <p style={{color:"red"}}>{scheduleError} </p>
                 <button className="scheduleSubmitBtn" type="submit">
-                  Save
+                  <BsSave2/>Save
                 </button>
 
 
@@ -286,6 +328,7 @@ function ProfilePage() {
         <button onClick={handleVisibleJsonContainer}>
           {" "}
           <MdOutlineFileUpload />
+        
           Scenario
         </button>
       )}
@@ -358,7 +401,7 @@ function ProfilePage() {
                   onChange={handleFileChange}
                 />
                 <button className="jsonuploadBtn" type="submit">
-                  Save
+                <BsSave2/>Save
                 </button>
               </form>
             </div>
@@ -405,7 +448,7 @@ function ProfilePage() {
                         onClick={() => handleDownloadJson(scenario.scenario_id)}
                       >
                       
-                        {/* <FaFileDownload /> */}
+                        <FiDownload />
                         Download
                       </button>
 
@@ -415,8 +458,21 @@ function ProfilePage() {
                        <RiCalendarScheduleFill />
                        Schedule
                       </button>
-                      <button style={{color:"red"}}><BsStopCircle />
-                      Stop</button>
+                      {scenario.schedule?<>
+                        <button onClick={(e)=>{handleStopAction(scenario.scenario_id,e,scenario.status)}}>
+                      {scenario.status=="Active"?
+                      <>
+                      <span style={{color:"red"}}>
+                      <FaRegPauseCircle />Stop</span>
+                      </>
+                      :<>
+                        <span style={{color:"#1ff91f"}}><RxResume />
+                        Resume</span>
+                      </>}
+                      
+                     </button>
+                      </>:null}
+                    
                     </td>
                   </tr>
                 ))}

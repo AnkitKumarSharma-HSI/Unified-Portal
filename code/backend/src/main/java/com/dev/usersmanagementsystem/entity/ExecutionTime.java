@@ -18,10 +18,13 @@ public class ExecutionTime {
     @Column(name = "start_time_in_millis")
     private Long startTimeInMillis;
 
-    @Column
+    @Column(name = "scenario_id")
     private int scenarioId;
 
-    @Column
+    @Column(name = "user_id")
     private int userId;
+
+    @Column
+    private String status;
 
 }

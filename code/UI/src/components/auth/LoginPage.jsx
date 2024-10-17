@@ -6,6 +6,15 @@ import { PiUserFocusFill } from "react-icons/pi";
 // import { LiaUserCircle } from "react-icons/lia";
 import { HiMiniUserCircle } from "react-icons/hi2";
 import { FaHouseUser } from "react-icons/fa";
+import { AiOutlineLogin } from "react-icons/ai";
+import { MdOutlineMailLock } from "react-icons/md";
+import { RiLockPasswordFill } from "react-icons/ri";
+import { MdLockReset } from "react-icons/md";
+import { MdLockPerson } from "react-icons/md";
+import { IoLogInOutline } from "react-icons/io5";
+
+
+
 
 
 
@@ -46,19 +55,23 @@ const handleSubmit = async (e) => {
 
     return(
         <div className="auth-container auth-container-login">
-            <h2><HiMiniUserCircle />
+            <h2>
+            <img src="./hitachi_logo_icon_168125.png" alt="Hitachi Logo"  style={{width:"50px"}}/>
+            {/* <HiMiniUserCircle /> */}
 
 
 </h2>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label>Email: </label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <label><MdOutlineMailLock />
+                    Email: </label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter User Email" />
                 </div>
                 <div className="form-group">
-                    <label>Password: </label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <label><MdLockPerson />
+                    Password: </label>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password" />
                 </div>
                 <button type="submit">Login</button>
             </form>

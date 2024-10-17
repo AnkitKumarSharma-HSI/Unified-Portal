@@ -66,7 +66,7 @@ function UserManagementPage() {
           {users.map(user => (
             <tr key={user.id}>
               <td>{user.id}</td>
-              <td>{user.name}</td>
+              <td style={{textTransform:"uppercase"}}>{user.name}</td>
               <td>{user.email}</td>
               <td>
                 <button className='delete-button' onClick={() => deleteUser(user.id)}><MdDelete />

@@ -10,14 +10,37 @@ import UpdateUser from './components/userspage/UpdateUser';
 import UserManagementPage from './components/userspage/UserManagementPage';
 import ProfilePage from './components/userspage/ProfilePage';
 import DashboardPage from './components/userspage/DashboardPage';
+import Loader from './components/common/Loader';
+import { useState,useEffect } from 'react';
 
 
 
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true); // State to manage loading
+  useEffect(() => {
+    // Check session storage to see if loader has already been shown
+    const loaderShown = sessionStorage.getItem('loaderShown');
+
+    if (!loaderShown) {
+      // Show loader for the first time
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        sessionStorage.setItem('loaderShown', 'true'); // Mark loader as shown
+      }, 2000); // Adjust the timeout to your liking
+
+      return () => clearTimeout(timer); // Clean up the timer
+    } else {
+      // If loader has been shown, don't show it again
+      setIsLoading(false);
+    }
+  }, []);
+
 
   return (
-    <BrowserRouter>
+    <>
+      {isLoading?<Loader></Loader>:
+        <BrowserRouter>
       <div className="App">
         <Navbar />
         <div className="content">
@@ -49,6 +72,9 @@ function App() {
         <FooterComponent />
       </div>
     </BrowserRouter>
+      }
+    </>
+    
   );
 }
 

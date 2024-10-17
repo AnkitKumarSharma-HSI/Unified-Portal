@@ -1,6 +1,5 @@
 package com.dev.usersmanagementsystem.controller;
 
-import com.dev.usersmanagementsystem.App;
 import com.dev.usersmanagementsystem.dto.ReqRes;
 import com.dev.usersmanagementsystem.entity.OurUsers;
 import com.dev.usersmanagementsystem.service.UsersManagementService;
@@ -12,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 
 
 @RestController
@@ -106,6 +104,16 @@ public class UserManagementController {
 
         } catch (Exception e) {
             System.out.println("Error occurred while adding  schedule"+e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PostMapping("/api/schedule/stop-resume")
+    public ResponseEntity<ReqRes> stopResumeSchedule(@RequestParam("scenarioId") String scenarioId,@RequestParam("userId") String userId,@RequestParam("state") String state){
+        try{
+            ReqRes response=usersManagementService.stopResumeSchedule(userId, scenarioId,state);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println("Error occurred while stopping schedule"+e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

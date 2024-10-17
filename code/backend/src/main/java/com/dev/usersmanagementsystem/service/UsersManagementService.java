@@ -344,6 +344,7 @@ public class UsersManagementService {
                     executionTime.setStartTimeInMillis(startTimeInMilli);
                     executionTime.setScenarioId(Integer.parseInt(scenarioId));
                     executionTime.setUserId(Integer.parseInt(userId));
+                    executionTime.setStatus("Active");
                     executionTimes.add(executionTime);
                     startTimeInMilli += frequencyInMillis;
                 }
@@ -359,6 +360,33 @@ public class UsersManagementService {
             reqRes.setStatusCode(500);
             reqRes.setMessage("Error occured while saving schedule: " + e.getMessage());
             throw new RuntimeException(e);
+        }
+        return reqRes;
+    }
+    public ReqRes stopResumeSchedule(String userId,String scenarioId,String state){
+        ReqRes reqRes = new ReqRes();
+        try{
+            Optional<Scenario> scenario=scenarioRepo.findScenarioByScenario_idAndUser_id(Integer.parseInt(scenarioId),Integer.parseInt(userId));
+            if(scenario.isPresent()){
+                scenario.get().setStatus(state);
+                scheduleRepo.save(scenario.get().getSchedule());
+            }
+
+            List<ExecutionTime> executionTime=executionTimeRepo.findExecutionTimeByScenarioIdAndUserId(Integer.parseInt(scenarioId),Integer.parseInt(userId));
+            for(ExecutionTime executionTime1:executionTime){
+                if(executionTime1.getStatus().equals("Active") || executionTime1.getStatus().equals("Inactive")){
+                    executionTime1.setStatus(state);
+                }
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("successful");
+            }
+            executionTimeRepo.saveAll(executionTime);
+
+        }catch(Exception e){
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occured while stopping schedule: " + e.getMessage());
+            throw new RuntimeException(e);
+
         }
         return reqRes;
     }
@@ -378,12 +406,15 @@ public class UsersManagementService {
         for (ExecutionTime executionTime : executionTimes) {
             Optional<Scenario> scenario = scenarioRepo.findScenarioByScenario_idAndUser_id(executionTime.getScenarioId(), executionTime.getUserId());
             System.out.println("New scenario"+scenario);
-            if(scenario.isPresent()){
+            if(scenario.isPresent() && executionTime.getStatus().equals("Active")){
                 String jsonContent=scenario.get().getJsonFile();
                 App obj = new App();
                 try {
+                        executionTime.setStatus("Executed");
+                        executionTimeRepo.save(executionTime);
                         obj.setup();
                         obj.runCode(jsonContent);
+
                 } catch (Exception e) {
                         System.out.println("Exception occurred while executing json"+e);
                 }
