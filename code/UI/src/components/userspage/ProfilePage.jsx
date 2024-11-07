@@ -27,6 +27,12 @@ import { BsFiletypeJson } from "react-icons/bs";
 import { BsSave2 } from "react-icons/bs";
 import { RxResume } from "react-icons/rx";
 import { FaRegPauseCircle } from "react-icons/fa";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import { MdUploadFile } from "react-icons/md";
+import { BsUpload } from "react-icons/bs";
+
+
 
 
 
@@ -268,10 +274,10 @@ function ProfilePage() {
               <IoClose />
             </span>
             <div className="subSchedulerContainer">
-              <h2><RiCalendarScheduleLine />
+              <h2 style={{color:"white"}}><RiCalendarScheduleLine />
                Schedule</h2>
               <form onSubmit={handleScheduleSumbit}>
-                <input type="number" placeholder="Frequency" className="json-field frequencey" name="frequency" id="frequency" onChange={(e)=>{setFrequency(e.target.value)}} /> 
+                <input type="number" placeholder="Frequency In Minutes" className="json-field frequencey" name="frequency" id="frequency" onChange={(e)=>{setFrequency(e.target.value)}} /> 
                 <br />
                 <label htmlFor="startDateInput">Start Date and Time: </label>
                 <input type="datetime-local" className="startDateInput" id="startDateInput" onChange={(e)=>{setStartDateTime(e.target.value)}}/>
@@ -325,9 +331,12 @@ function ProfilePage() {
         </button>
       )}
       {profileInfo.role !== "ADMIN" && (
-        <button onClick={handleVisibleJsonContainer}>
-          {" "}
-          <MdOutlineFileUpload />
+        <button onClick={handleVisibleJsonContainer} style={{
+    padding: "5px 0px 5px 0px",
+    fontSize: "20px"
+}}>
+         
+          <span><MdOutlineFileUpload /></span>
         
           Scenario
         </button>
@@ -350,6 +359,10 @@ function ProfilePage() {
           <div className="viewJSONChild"> {JSON.stringify(jsonData)}</div>
         </div>
       ) : null}
+     <div className="calenderContainer">
+      <Calendar/>
+
+      </div> 
       <div className="profile-page-btn-container">
         {isScenarioVisible ? (
           <div className="upload-json-container">
@@ -368,7 +381,7 @@ function ProfilePage() {
             </span>
             <div className="upload-json-subcontainer">
               <form onSubmit={handleSubmit}>
-                <h2><LuFileJson2 />
+                <h2 style={{color:"white"}}><LuFileJson2 />
                 Scenario</h2>
                 <input
                   type="text"
@@ -462,11 +475,13 @@ function ProfilePage() {
                         <button onClick={(e)=>{handleStopAction(scenario.scenario_id,e,scenario.status)}}>
                       {scenario.status=="Active"?
                       <>
-                      <span style={{color:"red"}}>
+                      <span style={{color:"white"}}>
                       <FaRegPauseCircle />Stop</span>
                       </>
                       :<>
-                        <span style={{color:"#1ff91f"}}><RxResume />
+                        <span style={{color:"white"}}>
+                        {/* #1ff91f */}
+                        <RxResume />
                         Resume</span>
                       </>}
                       

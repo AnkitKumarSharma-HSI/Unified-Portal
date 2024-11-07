@@ -120,6 +120,7 @@ nav > ul > li > a:hover {
   align-items: center;
   border-radius: 0px;
   border: 2px solid white;
+  z-index: 10;
 }
 .actionContainer {
   display: flex;
@@ -138,12 +139,13 @@ nav > ul > li > a:hover {
 .subSchedulerContainer {
   width: 30%;
   height: 80%;
-  border: 2px solid #b6b3b3;
-  border-radius: 10px;
+  border: 2px solid #e60027;
+  border-radius: 5px;
   display: flex;
+  color: white;
   justify-content: center;
   align-items: center;
-  background-color: whitesmoke;
+  background-color: #e60027;
 }
 .subSchedulerContainer {
   flex-direction: column;
@@ -291,7 +293,7 @@ button[type="submit"]:hover {
 }
 
 .footer {
-  background-color: maroon;
+  background-color: #e60027;
   color: white;
   padding: 20px;
   text-align: center;
@@ -354,7 +356,7 @@ h2 {
 table {
   width: 100%;
   border-collapse: separate;
-  border: 2px solid #f2f2f2;
+  /* border: 2px solid #aaaa; */
   border-radius: 10px;
 }
 table.userScenarioTable {
@@ -369,23 +371,24 @@ td {
   text-align: left;
   /* border-left: 2px solid #f2f2f2;
   border-top: 2px solid #f2f2f2; */
-  border: 2px solid #f2f2f2;
-  border-radius: 10px;
+  border: none;
+  border-radius: 4px;
   text-align: center;
   cursor: pointer;
 
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: #e5e5e5;
+  color: #333;
   font-weight: bold;
-  border: none;
+  /* border: none; */
   font-size: 18px;
  
 }
-td:first-child, th:first-child {
+/* td:first-child, th:first-child {
   border-left: none;
-}
+} */
 
 
 
@@ -398,7 +401,7 @@ tr:hover {
 }
 tr:hover td{
  background-color: #f2f2f2;
- /* border-color: maroon; */
+ /* border-color: #e60027; */
 
 }
 button {
@@ -422,7 +425,7 @@ button:hover {
 }
 
 .delete-button {
-  background-color: #a71c1c;
+  background-color: #e60027;
   color: white;
   margin-bottom: 10px;
   font-weight: 400;
@@ -447,12 +450,14 @@ button:hover {
   border: 1px solid #e9e5e5;
   background-color: #f9f9f9;
   height: 81vh;
+  /* position: relative; */
 }
 
 .profile-page-container h2 {
   margin-bottom: 20px;
   font-size: 24px;
   color: #333;
+  font-weight: bold;
 }
 
 .profile-page-container p {
@@ -524,9 +529,11 @@ select {
 
 .profileUserName {
   margin-left: 0px;
+  color: #333;
 }
 svg {
   margin-right: 5px;
+  /* color: #e60027; */
   cursor: pointer;
 }
 .uploadBtn {
@@ -576,4 +583,37 @@ fieldset {
 }
 .executeJsonBtn {
   border-radius: 30px !important;
+}
+.calenderContainer{
+  width: auto;
+  height: auto;
+  /* border: 2px solid; */
+  position: absolute;
+  right: 10px;
+  top: 91px;
+}
+.react-calendar__navigation button {
+  all: unset;
+color: #333;
+text-align: center;
+}
+.react-calendar button{
+  all: unset;
+  text-align: center;
+  padding: 2px;
+
+  border-radius: 10px;
+}
+.react-calendar__tile--now{
+  color: white !important;
+  background-color: #d9534f !important;
+
+}
+.react-calendar{
+  width: 300px !important;
+  font: inherit !important;
+  border: 1px solid #e5e5e5!important;
+  background-color: whitesmoke !important;
+  border-radius: 10px;
+  padding: 10px !important;
 }

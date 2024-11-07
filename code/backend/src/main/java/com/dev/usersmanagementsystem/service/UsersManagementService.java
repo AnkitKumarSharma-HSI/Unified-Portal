@@ -2,14 +2,8 @@ package com.dev.usersmanagementsystem.service;
 
 import com.dev.usersmanagementsystem.App;
 import com.dev.usersmanagementsystem.dto.ReqRes;
-import com.dev.usersmanagementsystem.entity.ExecutionTime;
-import com.dev.usersmanagementsystem.entity.OurUsers;
-import com.dev.usersmanagementsystem.entity.Scenario;
-import com.dev.usersmanagementsystem.entity.Schedule;
-import com.dev.usersmanagementsystem.repository.ExecutionTimeRepo;
-import com.dev.usersmanagementsystem.repository.ScenarioRepo;
-import com.dev.usersmanagementsystem.repository.ScheduleRepo;
-import com.dev.usersmanagementsystem.repository.UsersRepo;
+import com.dev.usersmanagementsystem.entity.*;
+import com.dev.usersmanagementsystem.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,7 +30,8 @@ public class UsersManagementService {
 
     @Autowired
     private UsersRepo usersRepo;
-
+    @Autowired
+    private CompanyRepo companyRepo;
     @Autowired
     private ScenarioRepo scenarioRepo;
 
@@ -69,7 +64,8 @@ public class UsersManagementService {
 
         try {
             OurUsers ourUser = new OurUsers();
-//            String userDb=registrationRequest.getName().toUpperCase();
+            Company company=new Company();
+            String userDb=registrationRequest.getName().toUpperCase();
             ourUser.setEmail(registrationRequest.getEmail());
             ourUser.setCity(registrationRequest.getCity());
             ourUser.setRole(registrationRequest.getRole());
@@ -77,9 +73,33 @@ public class UsersManagementService {
             ourUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
 //            ourUser.setUserDbName(userDb);
             OurUsers ourUsersResult = usersRepo.save(ourUser);
-//            String createDatabaseQuery = "CREATE DATABASE " + userDb;
-//            jdbcTemplate.execute(createDatabaseQuery);
+            String createDatabaseQuery = "CREATE DATABASE " + userDb;
+            jdbcTemplate.execute(createDatabaseQuery);
+            System.out.println("Database '" + userDb + "' created successfully.");
+            String useDatabaseQuery = "USE " + userDb;
+            jdbcTemplate.execute(useDatabaseQuery);
+            System.out.println("Using database: " + userDb);
+            String createTableQuery = "CREATE TABLE response_time ("
+                    + "End_time BIGINT, "
+                    + "ErrorLog VARCHAR(255), "
+                    + "Response_time BIGINT, "
+                    + "Start_time BIGINT, "
+                    + "Status VARCHAR(50), "
+                    + "Title VARCHAR(255), "
+                    + "URL VARCHAR(255));";
+
+            jdbcTemplate.execute(createTableQuery);
+            String userManagement = "USE " + "users_management";
+            jdbcTemplate.execute(userManagement);
+            System.out.println("Table 'response_time' created successfully.");
+
             if (ourUsersResult.getId()>0) {
+                company.setCompanyId(ourUsersResult.getId());
+                company.setDbName(registrationRequest.getName().toUpperCase());
+                company.setPassword("root");
+                company.setUsername("root");
+                company.setDbHost("127.0.0.1");
+                companyRepo.save(company);
                 resp.setOurUsers((ourUsersResult));
                 resp.setMessage("User Saved Successfully");
                 resp.setStatusCode(200);
@@ -408,11 +428,23 @@ public class UsersManagementService {
             System.out.println("New scenario"+scenario);
             if(scenario.isPresent() && executionTime.getStatus().equals("Active")){
                 String jsonContent=scenario.get().getJsonFile();
+                Optional<Company> company=companyRepo.findById(executionTime.getUserId());
+                String password="";
+                String username="";
+                String dbhost="";
+                String dbName="";
+                if(company.isPresent()){
+                     password=company.get().getPassword();
+                     username=company.get().getUsername();
+                     dbhost=company.get().getDbHost();
+                     dbName=company.get().getDbName();
+                }
+
                 App obj = new App();
                 try {
                         executionTime.setStatus("Executed");
                         executionTimeRepo.save(executionTime);
-                        obj.setup();
+                        obj.setup(password,username,dbhost,dbName);
                         obj.runCode(jsonContent);
 
                 } catch (Exception e) {
