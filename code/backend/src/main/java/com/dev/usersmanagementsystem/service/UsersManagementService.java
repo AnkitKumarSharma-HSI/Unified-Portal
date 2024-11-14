@@ -81,7 +81,7 @@ public class UsersManagementService {
             System.out.println("Using database: " + userDb);
             String createTableQuery = "CREATE TABLE response_time ("
                     + "End_time BIGINT, "
-                    + "ErrorLog VARCHAR(255), "
+                    + "ErrorLog VARCHAR(3000), "
                     + "Response_time BIGINT, "
                     + "Start_time BIGINT, "
                     + "Status VARCHAR(50), "

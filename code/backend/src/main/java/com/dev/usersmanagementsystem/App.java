@@ -212,9 +212,9 @@ public class App {
                 try{
                     String url = step.get("url").asText();
                     System.out.println(url);
-                    long start=System.currentTimeMillis();
+                    long start=System.currentTimeMillis()/1000;
                     navigateAndWait(url);
-                    long end=System.currentTimeMillis();
+                    long end=System.currentTimeMillis()/1000;
                     insertResponseTimeData(conn,end,"",end-start,start,"Success","","");
                 } catch (Exception e) {
                     insertResponseTimeData(conn,0,e.toString(),0,0,"Failed","","");
@@ -239,14 +239,14 @@ public class App {
                         try {
                             if(SelectorText.startsWith("xpath"))
                             {
-                                long start=System.currentTimeMillis();
+                                long start=System.currentTimeMillis()/1000;
                                 String xpath = SelectorText.replace("xpath/", "");
                                 System.out.println(xpath);
                                 //Thread.sleep(2000);
                                 waitForElementVisibility(By.xpath(xpath));
 
                                 clickOnElement(By.xpath(xpath));
-                                long end=System.currentTimeMillis();
+                                long end=System.currentTimeMillis()/1000;
                                 insertResponseTimeData(conn,end,"",end-start,start,"Success","","");
                                 break;
 
@@ -267,10 +267,10 @@ public class App {
                                 csspath = "#" + csspath;
                                 System.out.println("Extracted ID: " + csspath);
                                 //System.out.println(csspath);
-                                long start=System.currentTimeMillis();
+                                long start=System.currentTimeMillis()/1000;
                                 waitForElementVisibility(By.cssSelector(csspath));
                                 clickOnElement(By.cssSelector(csspath));
-                                long end=System.currentTimeMillis();
+                                long end=System.currentTimeMillis()/1000;
                                 insertResponseTimeData(conn,end,"",end-start,start,"Success","","");
 
                             } else {
@@ -302,9 +302,9 @@ public class App {
                                 String xpath = SelectorText.replace("xpath/", "");
                                 System.out.println(xpath);
                                 String Text = step.get("value").asText();
-                                long startTime=System.currentTimeMillis();
+                                long startTime=System.currentTimeMillis()/1000;
                                 waitForElementVisibility(By.xpath(xpath));
-                                long endTime=System.currentTimeMillis();
+                                long endTime=System.currentTimeMillis()/1000;
                                 insertResponseTimeData(conn,endTime,"",endTime-startTime,startTime,"Success","","");
 
                                 enterText(By.xpath(xpath),Text);
@@ -314,7 +314,7 @@ public class App {
 
                         } catch (Exception e) {
                             String errorLog=e.toString();
-                            insertResponseTimeData(conn,0,errorLog,0,0,"Success","","");
+                            insertResponseTimeData(conn,0,errorLog,0,0,"Failed","","");
 
                         }
 

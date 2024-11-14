@@ -360,7 +360,7 @@ function ProfilePage() {
         </div>
       ) : null}
      <div className="calenderContainer">
-      <Calendar/>
+      {/* <Calendar/> */}
 
       </div> 
       <div className="profile-page-btn-container">
