@@ -4,6 +4,7 @@ class UserService {
   static BASE_URL = "http://10.0.5.50:1010";
 
   static async login(email, password) {
+    console.log("Login is called using the url "+UserService.BASE_URL);
     try {
       const response = await axios.post(`${UserService.BASE_URL}/auth/login`, {
         email,
@@ -11,6 +12,7 @@ class UserService {
       });
       return response.data;
     } catch (err) {
+      console.log("error while login "+err);
       throw err;
     }
   }
