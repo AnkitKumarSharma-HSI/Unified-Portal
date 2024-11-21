@@ -73,25 +73,29 @@ public class UsersManagementService {
             ourUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
 //            ourUser.setUserDbName(userDb);
             OurUsers ourUsersResult = usersRepo.save(ourUser);
-            String createDatabaseQuery = "CREATE DATABASE " + userDb;
-            jdbcTemplate.execute(createDatabaseQuery);
-            System.out.println("Database '" + userDb + "' created successfully.");
-            String useDatabaseQuery = "USE " + userDb;
-            jdbcTemplate.execute(useDatabaseQuery);
-            System.out.println("Using database: " + userDb);
-            String createTableQuery = "CREATE TABLE response_time ("
-                    + "End_time BIGINT, "
-                    + "ErrorLog VARCHAR(3000), "
-                    + "Response_time BIGINT, "
-                    + "Start_time BIGINT, "
-                    + "Status VARCHAR(50), "
-                    + "Title VARCHAR(255), "
-                    + "URL VARCHAR(255));";
+            if(!userDb.equals("ADMIN")) {
+                String createDatabaseQuery = "CREATE DATABASE " + userDb;
+                jdbcTemplate.execute(createDatabaseQuery);
+                System.out.println("Database '" + userDb + "' created successfully.");
+                String useDatabaseQuery = "USE " + userDb;
+                jdbcTemplate.execute(useDatabaseQuery);
+                System.out.println("Using database: " + userDb);
+                String createTableQuery = "CREATE TABLE response_time ("
+                        +" name VARCHAR(255),"
+                        + "time BIGINT, "
+                        + "End_time BIGINT, "
+                        + "ErrorLog VARCHAR(3000), "
+                        + "Response_time BIGINT, "
+                        + "Start_time BIGINT, "
+                        + "Status VARCHAR(50), "
+                        + "Title VARCHAR(255), "
+                        + "URL VARCHAR(255));";
 
-            jdbcTemplate.execute(createTableQuery);
-            String userManagement = "USE " + "users_management";
-            jdbcTemplate.execute(userManagement);
-            System.out.println("Table 'response_time' created successfully.");
+                jdbcTemplate.execute(createTableQuery);
+                String userManagement = "USE " + "users_management";
+                jdbcTemplate.execute(userManagement);
+                System.out.println("Table 'response_time' created successfully.");
+            }
 
             if (ourUsersResult.getId()>0) {
                 company.setCompanyId(ourUsersResult.getId());
@@ -428,7 +432,7 @@ public class UsersManagementService {
             System.out.println("New scenario"+scenario);
             if(scenario.isPresent() && executionTime.getStatus().equals("Active")){
                 String jsonContent=scenario.get().getJsonFile();
-                Optional<Company> company=companyRepo.findById(executionTime.getUserId());
+                Optional<Company> company=companyRepo.findByCompanyId(executionTime.getUserId());
                 String password="";
                 String username="";
                 String dbhost="";
