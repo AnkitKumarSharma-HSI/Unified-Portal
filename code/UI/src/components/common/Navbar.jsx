@@ -35,7 +35,7 @@ function Navbar() {
             <ul>
             <img src="./hitachi-official-logo.png" alt="" className='companyLogo' />
                 {!isAuthenticated && <li><Link to="/">Synthetic Monitoring</Link></li>}
-                {isAuthenticated && <li><Link to="/dashboard"><MdDashboardCustomize />
+                {!isAdmin && isAuthenticated && <li><Link to="/dashboard"><MdDashboardCustomize />
                     Dashboard</Link></li>}
                 {isAuthenticated && <li><Link to="/profile"><ImProfile />
                     Profile</Link></li>}
