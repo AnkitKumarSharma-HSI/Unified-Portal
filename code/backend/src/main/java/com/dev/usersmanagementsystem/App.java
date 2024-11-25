@@ -33,7 +33,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  *
  */
 public class App {
-    private final String configFilePath = "src/main/java/com/dev/usersmanagementsystem/config.properties";
+    private final String configFilePath = "";
     private Properties properties;
     private WebDriver driver;
     private Connection conn;
@@ -146,7 +146,7 @@ public class App {
 
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
-            throw new RuntimeException("config.properties not found at config file path" + configFilePath);
+//            throw new RuntimeException("config.properties not found at config file path" + configFilePath);
         }
 
     }
@@ -195,7 +195,7 @@ public class App {
 //    }
 
     public void runCode(String jsonContent) throws IOException, InterruptedException {
-        ConfigFileReader();
+//        ConfigFileReader();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(jsonContent);
         JsonNode stepsNode = rootNode.get("steps");
