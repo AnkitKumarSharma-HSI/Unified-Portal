@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -28,10 +28,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-/**
- * Hello world!
- *
- */
+
 public class App {
     private final String configFilePath = "";
     private Properties properties;
@@ -88,23 +85,25 @@ public class App {
             return null;  // Return null or handle accordingly
         }
     }
-    public void insertResponseTimeData(Connection conn, long endTime, String errorLog, long responseTime,
-                                       long startTime, String status, String title, String url) {
+    public void insertResponseTimeData(Connection conn, Timestamp endTime, String errorLog, long responseTime,
+                                       Timestamp startTime, String status, String title, String url) {
         // SQL insert statement
-        String insertQuery = "INSERT INTO response_time (End_time, ErrorLog, Response_time, Start_time, Status, Title, URL) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO response_time (name,time,End_time, ErrorLog, Response_time, Start_time, Status, Title, URL) "
+                + "VALUES (? ,?, ?, ?, ?, ?, ?, ?, ?)";
 
         // Use a try-with-resources to ensure PreparedStatement is closed properly
         try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
 
             // Set the values for each placeholder (?)
-            stmt.setLong(1, endTime);
-            stmt.setString(2, errorLog);
-            stmt.setLong(3, responseTime);
-            stmt.setLong(4, startTime);
-            stmt.setString(5, status);
-            stmt.setString(6, title);
-            stmt.setString(7, url);
+            stmt.setString(1, "");
+            stmt.setTimestamp(2,endTime);
+            stmt.setTimestamp(3, endTime);
+            stmt.setString(4, errorLog);
+            stmt.setLong(5, responseTime);
+            stmt.setTimestamp(6, startTime);
+            stmt.setString(7, status);
+            stmt.setString(8, title);
+            stmt.setString(9, url);
 
             // Execute the insert statement
             int rowsAffected = stmt.executeUpdate();
@@ -209,15 +208,26 @@ public class App {
             String type = step.get("type").asText();
             if(type.equals("navigate"))
             {
+                String url = step.get("url").asText();
+                JsonNode assertedEventsNode = step.get("assertedEvents");
+                String title="";
+                if (assertedEventsNode != null && !assertedEventsNode.isEmpty()) {
+                     title = assertedEventsNode.get(0).get("title").asText();
+                    System.out.println("Title: " + title);
+                }
                 try{
-                    String url = step.get("url").asText();
-                    System.out.println(url);
-                    long start=System.currentTimeMillis()/1000;
+                    System.out.println("Navigating to URL: " + url);
+//                    String url = step.get("url").asText();
+//                    System.out.println(url);
+                    long startTime=System.currentTimeMillis();
+                    Timestamp startTimeStamp=new Timestamp(startTime);
                     navigateAndWait(url);
-                    long end=System.currentTimeMillis()/1000;
-                    insertResponseTimeData(conn,end,"",end-start,start,"Success","","");
+                    long endTime=System.currentTimeMillis();
+                    Timestamp endTimeStamp=new Timestamp(endTime);
+                    insertResponseTimeData(conn,endTimeStamp,"",endTime-startTime,startTimeStamp,"Success",title,url);
                 } catch (Exception e) {
-                    insertResponseTimeData(conn,0,e.toString(),0,0,"Failed","","");
+                    Timestamp zeroTimestamp = new Timestamp(0);
+                    insertResponseTimeData(conn,zeroTimestamp,e.toString(),0,zeroTimestamp,"Failed",title,url);
 
                 }
 
@@ -239,15 +249,17 @@ public class App {
                         try {
                             if(SelectorText.startsWith("xpath"))
                             {
-                                long start=System.currentTimeMillis()/1000;
+//                                long startTime=System.currentTimeMillis();
+//                                Timestamp startTimeStamp=new Timestamp(startTime);
                                 String xpath = SelectorText.replace("xpath/", "");
                                 System.out.println(xpath);
                                 //Thread.sleep(2000);
                                 waitForElementVisibility(By.xpath(xpath));
 
                                 clickOnElement(By.xpath(xpath));
-                                long end=System.currentTimeMillis()/1000;
-                                insertResponseTimeData(conn,end,"",end-start,start,"Success","","");
+//                                long endTime=System.currentTimeMillis();
+//                                Timestamp endTimeStamp=new Timestamp(endTime);
+//                                insertResponseTimeData(conn,endTimeStamp,"",endTime-startTime,startTimeStamp,"Success","","");
                                 break;
 
                             }
@@ -267,15 +279,20 @@ public class App {
                                 csspath = "#" + csspath;
                                 System.out.println("Extracted ID: " + csspath);
                                 //System.out.println(csspath);
-                                long start=System.currentTimeMillis()/1000;
+//                                long startTime=System.currentTimeMillis();
+//                                Timestamp startTimeStamp = new Timestamp(startTime);
+
                                 waitForElementVisibility(By.cssSelector(csspath));
                                 clickOnElement(By.cssSelector(csspath));
-                                long end=System.currentTimeMillis()/1000;
-                                insertResponseTimeData(conn,end,"",end-start,start,"Success","","");
+//                                long end=System.currentTimeMillis();
+//                                Timestamp endTimeStamp = new Timestamp(end);
+
+//                                insertResponseTimeData(conn,endTimeStamp,"",end-startTime,startTimeStamp,"Success","","");
 
                             } else {
+//                                Timestamp zeroTimestamp = new Timestamp(0);
                                 System.out.println("ID not found.");
-                                insertResponseTimeData(conn,0,e.toString(),0,0,"Failed","","");
+//                                insertResponseTimeData(conn,zeroTimestamp,e.toString(),0,zeroTimestamp,"Failed","","");
 
                             }
 
@@ -302,10 +319,14 @@ public class App {
                                 String xpath = SelectorText.replace("xpath/", "");
                                 System.out.println(xpath);
                                 String Text = step.get("value").asText();
-                                long startTime=System.currentTimeMillis()/1000;
+//                                long startTime=System.currentTimeMillis();
+//                                Timestamp startTimeStamp = new Timestamp(startTime);
+
                                 waitForElementVisibility(By.xpath(xpath));
-                                long endTime=System.currentTimeMillis()/1000;
-                                insertResponseTimeData(conn,endTime,"",endTime-startTime,startTime,"Success","","");
+//                                long endTime=System.currentTimeMillis();
+//                                Timestamp endTimeStamp = new Timestamp(endTime);
+
+//                                insertResponseTimeData(conn,endTimeStamp,"",endTime-startTime,startTimeStamp,"Success","","");
 
                                 enterText(By.xpath(xpath),Text);
 
@@ -314,7 +335,8 @@ public class App {
 
                         } catch (Exception e) {
                             String errorLog=e.toString();
-                            insertResponseTimeData(conn,0,errorLog,0,0,"Failed","","");
+//                            Timestamp zeroTimestamp = new Timestamp(0);
+//                            insertResponseTimeData(conn,zeroTimestamp,errorLog,0,zeroTimestamp,"Failed","","");
 
                         }
 

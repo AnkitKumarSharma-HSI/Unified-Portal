@@ -81,12 +81,12 @@ public class UsersManagementService {
                 jdbcTemplate.execute(useDatabaseQuery);
                 System.out.println("Using database: " + userDb);
                 String createTableQuery = "CREATE TABLE response_time ("
-                        +" name VARCHAR(255),"
-                        + "time BIGINT, "
-                        + "End_time BIGINT, "
-                        + "ErrorLog VARCHAR(3000), "
-                        + "Response_time BIGINT, "
-                        + "Start_time BIGINT, "
+                        +" name VARCHAR(50),"
+                        + "time timestamp , "
+                        + "End_time timestamp   , "
+                        + "ErrorLog TEXT, "
+                        + "Response_time INT, "
+                        + "Start_time timestamp   , "
                         + "Status VARCHAR(50), "
                         + "Title VARCHAR(255), "
                         + "URL VARCHAR(255));";
@@ -447,7 +447,7 @@ public class UsersManagementService {
                 App obj = new App();
                 try {
                         executionTime.setStatus("Executed");
-                        executionTimeRepo.save(executionTime);
+                            executionTimeRepo.save(executionTime);
                         obj.setup(password,username,dbhost,dbName);
                         obj.runCode(jsonContent);
 
