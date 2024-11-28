@@ -36,7 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request-> request.requestMatchers("/auth/**", "/public/**").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/user/**").hasAnyAuthority("USER")
-                        .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER").requestMatchers("/api/json/**").permitAll().requestMatchers("/api/executejson/**").permitAll().requestMatchers("/api/schedule/**").permitAll()
+                        .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER").requestMatchers("/api/json/**").permitAll().requestMatchers("/api/executejson/**").permitAll().requestMatchers("/api/schedule/**").permitAll().requestMatchers("/api/get-execution-by-time").permitAll().requestMatchers("/api/get-scenario-by-userId").permitAll()
+                        .requestMatchers("/api/get-company-by-userId").permitAll().requestMatchers("/api/mark-execution-status").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager->manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(

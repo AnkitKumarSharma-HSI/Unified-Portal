@@ -414,7 +414,7 @@ public class UsersManagementService {
         }
         return reqRes;
     }
-    @Scheduled(fixedRate = 60000)
+//    @Scheduled(fixedRate = 60000)
     public void scheduleExecution() {
         Long currentTimeInMillis = Instant.now().toEpochMilli()+19800000;
         Instant instant = Instant.ofEpochMilli(currentTimeInMillis);
@@ -458,5 +458,76 @@ public class UsersManagementService {
             }
 
         }
+
     }
+    public ReqRes getExecutionTime(long utcMilliseconds){
+        ReqRes reqRes = new ReqRes();
+        try{
+            List<ExecutionTime> executionTimes = executionTimeRepo.findByStartTimeInMillis(utcMilliseconds);
+            if(!executionTimes.isEmpty()){
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("successful");
+                reqRes.setExecutionTimeList(executionTimes);
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while getting execution time: " + e.getMessage());
+            System.out.println("Exception Occurred while getting execution time list from milliseconds"+e);
+        }
+        return reqRes;
+
+    }
+    public ReqRes getScenarioByUserIdAndScenarioId(int userId,int scenarioId){
+        ReqRes reqRes = new ReqRes();
+        try{
+            Optional<Scenario> scenario = scenarioRepo.findScenarioByScenario_idAndUser_id(scenarioId,userId);
+            if(scenario.isPresent()){
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("successful");
+                reqRes.setScenario(scenario.get());
+
+            }
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while getting scenario: " + e.getMessage());
+            System.out.println("Exception Occurred while getting scenario from userId and scenarioId"+e);
+        }
+        return reqRes;
+    }
+    public ReqRes getCompanyByUserId(int userId){
+        ReqRes reqRes=new ReqRes();
+        try{
+            Optional<Company> company=companyRepo.findByCompanyId(userId);
+            if(company.isPresent()){
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("successful");
+                reqRes.setCompany(company.get());
+            }
+
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while getting company: " + e.getMessage());
+            System.out.println("Exception Occurred while getting company from userId"+e);
+        }
+        return reqRes;
+    }
+    public ReqRes saveExecutionStatus(String executionIdParam,String status){
+        ReqRes response = new ReqRes();
+        try{
+            int executionId=Integer.parseInt(executionIdParam);
+            ExecutionTime executionTime=executionTimeRepo.findExecutionTimeByExecutionId(executionId);
+            executionTime.setStatus(status);
+            executionTimeRepo.save(executionTime);
+            response.setStatusCode(200);
+
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("Error occurred while saving execution status: " + e.getMessage());
+            System.out.println("Exception Occurred while saving execution status"+e);
+
+        }
+        return response;
+    }
+
 }

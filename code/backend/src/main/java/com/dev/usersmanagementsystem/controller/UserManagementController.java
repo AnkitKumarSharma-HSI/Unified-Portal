@@ -1,6 +1,7 @@
 package com.dev.usersmanagementsystem.controller;
 
 import com.dev.usersmanagementsystem.dto.ReqRes;
+import com.dev.usersmanagementsystem.entity.ExecutionTime;
 import com.dev.usersmanagementsystem.entity.OurUsers;
 import com.dev.usersmanagementsystem.service.UsersManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 
 
 @RestController
@@ -115,6 +117,45 @@ public class UserManagementController {
         } catch (Exception e) {
             System.out.println("Error occurred while stopping schedule"+e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/api/get-execution-by-time")
+    public ResponseEntity<ReqRes> getExecutionByTime(@RequestParam("utcMilliseconds") String utcMilliseconds){
+        try {
+            ReqRes response=usersManagementService.getExecutionTime(Long.parseLong(utcMilliseconds));
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println("Error occurred while getting the execution time"+e);
+            return  new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/api/get-scenario-by-userId")
+    public ResponseEntity<ReqRes> getScenarioByUserId(@RequestParam("userId") String userId, @RequestParam("scenarioId") String scenarioId){
+        try{
+            ReqRes response=usersManagementService.getScenarioByUserIdAndScenarioId(Integer.parseInt(userId),Integer.parseInt(scenarioId));
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println("Error occurred while getting the scenario by id"+e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/api/get-company-by-userId")
+    public ResponseEntity<ReqRes> getCompanyByUserId(@RequestParam("userId") String userId){
+        try{
+            ReqRes reqRes=usersManagementService.getCompanyByUserId(Integer.parseInt(userId));
+            return new ResponseEntity<>(reqRes,HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println("Error occurred while getting the company by user Id"+e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PostMapping("/api/mark-execution-status")
+    public ResponseEntity<ReqRes> markExecutionStatus(@RequestParam("executionId") String executionId,@RequestParam("status") String status){
+        try{
+            return ResponseEntity.ok(usersManagementService.saveExecutionStatus(executionId,status));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
