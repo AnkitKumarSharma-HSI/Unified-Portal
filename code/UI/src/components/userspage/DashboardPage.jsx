@@ -60,7 +60,7 @@ function DashboardPage() {
               ></iframe>
             </div>
           </div>
-        ) : null}
+        ) : <p>No Data Available</p>}
       </div>
     </>
   );
