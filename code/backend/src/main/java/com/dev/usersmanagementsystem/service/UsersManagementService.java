@@ -512,11 +512,11 @@ public class UsersManagementService {
         }
         return reqRes;
     }
-    public ReqRes saveExecutionStatus(String executionIdParam,String status){
+    public ReqRes saveExecutionStatus(String executionIdParam,String status,String userId){
         ReqRes response = new ReqRes();
         try{
             int executionId=Integer.parseInt(executionIdParam);
-            ExecutionTime executionTime=executionTimeRepo.findExecutionTimeByExecutionId(executionId);
+            ExecutionTime executionTime=executionTimeRepo.findExecutionTimeByExecutionIdAndUserId(executionId,Integer.parseInt(userId));
             executionTime.setStatus(status);
             executionTimeRepo.save(executionTime);
             response.setStatusCode(200);

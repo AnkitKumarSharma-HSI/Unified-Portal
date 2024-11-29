@@ -21,47 +21,47 @@ public class UserManagementController {
     private UsersManagementService usersManagementService;
 
     @PostMapping("/auth/register")
-    public ResponseEntity<ReqRes> register(@RequestBody ReqRes reg){
+    public ResponseEntity<ReqRes> register(@RequestBody ReqRes reg) {
         return ResponseEntity.ok(usersManagementService.register(reg));
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<ReqRes> login(@RequestBody ReqRes req){
+    public ResponseEntity<ReqRes> login(@RequestBody ReqRes req) {
         return ResponseEntity.ok(usersManagementService.login(req));
     }
 
     @PostMapping("/auth/refresh")
-    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes req){
+    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes req) {
         return ResponseEntity.ok(usersManagementService.refreshToken(req));
     }
 
     @GetMapping("/admin/get-all-users")
-    public ResponseEntity<ReqRes> getAllUsers(){
+    public ResponseEntity<ReqRes> getAllUsers() {
         return ResponseEntity.ok(usersManagementService.getAllUsers());
 
     }
 
     @GetMapping("/admin/get-users/{userId}")
-    public ResponseEntity<ReqRes> getUSerByID(@PathVariable Integer userId){
+    public ResponseEntity<ReqRes> getUSerByID(@PathVariable Integer userId) {
         return ResponseEntity.ok(usersManagementService.getUsersById(userId));
 
     }
 
     @PutMapping("/admin/update/{userId}")
-    public ResponseEntity<ReqRes> updateUser(@PathVariable Integer userId, @RequestBody OurUsers reqres){
+    public ResponseEntity<ReqRes> updateUser(@PathVariable Integer userId, @RequestBody OurUsers reqres) {
         return ResponseEntity.ok(usersManagementService.updateUser(userId, reqres));
     }
 
     @GetMapping("/adminuser/get-profile")
-    public ResponseEntity<ReqRes> getMyProfile(){
+    public ResponseEntity<ReqRes> getMyProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         ReqRes response = usersManagementService.getMyInfo(email);
-        return  ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
     @DeleteMapping("/admin/delete/{userId}")
-    public ResponseEntity<ReqRes> deleteUSer(@PathVariable Integer userId){
+    public ResponseEntity<ReqRes> deleteUSer(@PathVariable Integer userId) {
         return ResponseEntity.ok(usersManagementService.deleteUser(userId));
     }
 
@@ -75,8 +75,8 @@ public class UserManagementController {
 //    }
 
     @PostMapping("/api/upload/json")
-    public ResponseEntity<String> uploadJsonFile(@RequestParam("file") MultipartFile file, @RequestParam("id") String id,@RequestParam("code") String code,@RequestParam("desc") String desc) {
-        System.out.println(id+" "+code+" "+desc );
+    public ResponseEntity<String> uploadJsonFile(@RequestParam("file") MultipartFile file, @RequestParam("id") String id, @RequestParam("code") String code, @RequestParam("desc") String desc) {
+        System.out.println(id + " " + code + " " + desc);
 
         if (file.isEmpty()) {
             return new ResponseEntity<>("File is empty. Kindly select a different file and try again. Thanks", HttpStatus.BAD_REQUEST);
@@ -87,73 +87,78 @@ public class UserManagementController {
             String jsonContent = new String(file.getBytes());
 
             // Process the file as needed (e.g., save it to a directory, process the content, etc.)
-            ReqRes response=usersManagementService.fileUpload(jsonContent,id,code,desc);
+            ReqRes response = usersManagementService.fileUpload(jsonContent, id, code, desc);
             // Optionally, save the file to the server or process it
             // Files.write(Paths.get("path/to/save/file.json"), file.getBytes());
 
             return new ResponseEntity<>("File uploaded successfully!", HttpStatus.OK);
 
         } catch (Exception e) {
-            System.out.println("Error occurred while saving file"+e);
+            System.out.println("Error occurred while saving file" + e);
             return new ResponseEntity<>("Error processing the file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @PostMapping("/api/schedule/add")
-    public ResponseEntity<ReqRes> addSchedule(@RequestParam("scenarioId")String scenarioId,@RequestParam("frequency") String frequency,@RequestParam("sdt") String sdt,@RequestParam("edt") String edt,@RequestParam("userId") String userId){
-        try{
-            ReqRes response=usersManagementService.saveScheduleInfo(userId,scenarioId,frequency,sdt,edt);
-            return new ResponseEntity<>(response,HttpStatus.OK);
+    public ResponseEntity<ReqRes> addSchedule(@RequestParam("scenarioId") String scenarioId, @RequestParam("frequency") String frequency, @RequestParam("sdt") String sdt, @RequestParam("edt") String edt, @RequestParam("userId") String userId) {
+        try {
+            ReqRes response = usersManagementService.saveScheduleInfo(userId, scenarioId, frequency, sdt, edt);
+            return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
-            System.out.println("Error occurred while adding  schedule"+e);
+            System.out.println("Error occurred while adding  schedule" + e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @PostMapping("/api/schedule/stop-resume")
-    public ResponseEntity<ReqRes> stopResumeSchedule(@RequestParam("scenarioId") String scenarioId,@RequestParam("userId") String userId,@RequestParam("state") String state){
-        try{
-            ReqRes response=usersManagementService.stopResumeSchedule(userId, scenarioId,state);
-            return new ResponseEntity<>(response,HttpStatus.OK);
+    public ResponseEntity<ReqRes> stopResumeSchedule(@RequestParam("scenarioId") String scenarioId, @RequestParam("userId") String userId, @RequestParam("state") String state) {
+        try {
+            ReqRes response = usersManagementService.stopResumeSchedule(userId, scenarioId, state);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("Error occurred while stopping schedule"+e);
+            System.out.println("Error occurred while stopping schedule" + e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/api/get-execution-by-time")
-    public ResponseEntity<ReqRes> getExecutionByTime(@RequestParam("utcMilliseconds") String utcMilliseconds){
+    public ResponseEntity<ReqRes> getExecutionByTime(@RequestParam("utcMilliseconds") String utcMilliseconds) {
         try {
-            ReqRes response=usersManagementService.getExecutionTime(Long.parseLong(utcMilliseconds));
-            return new ResponseEntity<>(response,HttpStatus.OK);
+            ReqRes response = usersManagementService.getExecutionTime(Long.parseLong(utcMilliseconds));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("Error occurred while getting the execution time"+e);
-            return  new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            System.out.println("Error occurred while getting the execution time" + e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/api/get-scenario-by-userId")
-    public ResponseEntity<ReqRes> getScenarioByUserId(@RequestParam("userId") String userId, @RequestParam("scenarioId") String scenarioId){
-        try{
-            ReqRes response=usersManagementService.getScenarioByUserIdAndScenarioId(Integer.parseInt(userId),Integer.parseInt(scenarioId));
-            return new ResponseEntity<>(response,HttpStatus.OK);
+    public ResponseEntity<ReqRes> getScenarioByUserId(@RequestParam("userId") String userId, @RequestParam("scenarioId") String scenarioId) {
+        try {
+            ReqRes response = usersManagementService.getScenarioByUserIdAndScenarioId(Integer.parseInt(userId), Integer.parseInt(scenarioId));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("Error occurred while getting the scenario by id"+e);
+            System.out.println("Error occurred while getting the scenario by id" + e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/api/get-company-by-userId")
-    public ResponseEntity<ReqRes> getCompanyByUserId(@RequestParam("userId") String userId){
-        try{
-            ReqRes reqRes=usersManagementService.getCompanyByUserId(Integer.parseInt(userId));
-            return new ResponseEntity<>(reqRes,HttpStatus.OK);
+    public ResponseEntity<ReqRes> getCompanyByUserId(@RequestParam("userId") String userId) {
+        try {
+            ReqRes reqRes = usersManagementService.getCompanyByUserId(Integer.parseInt(userId));
+            return new ResponseEntity<>(reqRes, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("Error occurred while getting the company by user Id"+e);
+            System.out.println("Error occurred while getting the company by user Id" + e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @PostMapping("/api/mark-execution-status")
-    public ResponseEntity<ReqRes> markExecutionStatus(@RequestParam("executionId") String executionId,@RequestParam("status") String status){
-        try{
-            return ResponseEntity.ok(usersManagementService.saveExecutionStatus(executionId,status));
+    public ResponseEntity<ReqRes> markExecutionStatus(@RequestParam("executionId") String executionId, @RequestParam("status") String status, @RequestParam("userId") String userId) {
+        try {
+            return ResponseEntity.ok(usersManagementService.saveExecutionStatus(executionId, status, userId));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
