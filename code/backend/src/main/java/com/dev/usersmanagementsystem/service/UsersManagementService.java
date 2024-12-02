@@ -12,8 +12,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.View;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -57,6 +62,8 @@ public class UsersManagementService {
     private JdbcTemplate jdbcTemplate;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    @Autowired
+    private View error;
 
 
     public ReqRes register(ReqRes registrationRequest){
@@ -529,5 +536,86 @@ public class UsersManagementService {
         }
         return response;
     }
+    public ReqRes saveLogs(String endTime,String errorLog,String responseTime,String startTime,String status,String title,String url,String userId){
+        ReqRes response = new ReqRes();
+        try{
+            Timestamp endTimeVal=Timestamp.valueOf(endTime);
+            long responseTimeVal=Long.valueOf(responseTime);
+            Timestamp startTimeVal=Timestamp.valueOf(startTime);
+            Optional<Company> company=companyRepo.findByCompanyId(Integer.parseInt(userId));
+            String password = "";
+            String username = "";
+            String dbhost = "";
+            String dbName = "";
+            if(company.isPresent()){
+                if (company != null) {
+                    password = company.get().getPassword();
+                    username = company.get().getUsername();
+                    dbhost = company.get().getDbHost();
+                    dbName = company.get().getDbName();
+                }
+            }
+            dbhost="localhost";
+            String dburl = "jdbc:mysql://"+dbhost+":"+"3306";
+            Connection conn=connectToMySQL(dburl,username,password,dbName);
+            insertResponseTimeData(conn,endTimeVal,errorLog,responseTimeVal,startTimeVal,status,title,url);
+            response.setStatusCode(200);
+            response.setMessage("successful");
 
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("Error occurred while saving logs: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+
+
+        return response;
+    }
+    public static Connection connectToMySQL(String url, String username, String password, String dbName) {
+        try {
+            // JDBC URL format: jdbc:mysql://<hostname>:<port>/<dbname>
+            String jdbcUrl = url + "/" + dbName;
+
+            // Establish a connection to the database
+            Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+
+            // Return the connection
+            return connection;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;  // Return null or handle accordingly
+        }
+    }
+    public void insertResponseTimeData(Connection conn, Timestamp endTime, String errorLog, long responseTime,
+                                       Timestamp startTime, String status, String title, String url) {
+        // SQL insert statement
+        String insertQuery = "INSERT INTO response_time (name,time,End_time, ErrorLog, Response_time, Start_time, Status, Title, URL) "
+                + "VALUES (? ,?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // Use a try-with-resources to ensure PreparedStatement is closed properly
+        try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
+
+            // Set the values for each placeholder (?)
+            stmt.setString(1, "");
+            stmt.setTimestamp(2,endTime);
+            stmt.setTimestamp(3, endTime);
+            stmt.setString(4, errorLog);
+            stmt.setLong(5, responseTime);
+            stmt.setTimestamp(6, startTime);
+            stmt.setString(7, status);
+            stmt.setString(8, title);
+            stmt.setString(9, url);
+
+            // Execute the insert statement
+            int rowsAffected = stmt.executeUpdate();
+
+            System.out.println("Rows affected: " + rowsAffected);  // Output the number of rows inserted
+
+        } catch (Exception e) {
+            // Handle any SQL exception
+            e.printStackTrace();
+            System.err.println("Error inserting data into response_time table: " + e.getMessage());
+        }
+    }
 }

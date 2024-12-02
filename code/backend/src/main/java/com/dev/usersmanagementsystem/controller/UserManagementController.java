@@ -163,5 +163,13 @@ public class UserManagementController {
             throw new RuntimeException(e);
         }
     }
+    @PostMapping("/api/store-logs")
+    public ResponseEntity<ReqRes> storeLogs(@RequestParam("endTime") String endTime,@RequestParam("errorLog") String errorLog,@RequestParam("responseTime") String responseTime,@RequestParam("startTime") String startTime,@RequestParam("status") String status,@RequestParam("title") String title,@RequestParam("url") String url,@RequestParam("userId") String userId) {
+        try{
+            return ResponseEntity.ok(usersManagementService.saveLogs(endTime, errorLog, responseTime, startTime, status, title, url, userId));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
