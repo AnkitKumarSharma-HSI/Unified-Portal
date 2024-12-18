@@ -1,5 +1,7 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.entity;
-
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,7 +16,6 @@ import java.util.List;
 @Table(name = "ourusers")
 @Data
 public class OurUsers implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,17 +24,8 @@ public class OurUsers implements UserDetails {
     private String password;
     private String city;
     private String role;
-//    @Column(columnDefinition = "json")
-//    private String jsonFile;
-//
-//    @Column(columnDefinition = "json")
-//    private String previousJsonFile;
-
-//    @Column
-//    private String userDbName;
-    @Column(name="dashboard_url")
+    @Column(name = "dashboard_url")
     private String dashboardUrl;
-
     @OneToMany(mappedBy = "user_id")
     private List<Scenario> scenarios;
 

@@ -1,8 +1,13 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.entity;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
 @Getter
 @Setter
 @Entity
@@ -22,7 +27,7 @@ public class Company {
     @Column(name = "password")
     private String password;
 
-    @Column(name="company_id")
+    @Column(name = "company_id")
     private int companyId;
 
     @Column(name = "db_host")

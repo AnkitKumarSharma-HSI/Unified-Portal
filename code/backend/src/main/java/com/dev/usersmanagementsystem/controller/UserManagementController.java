@@ -1,7 +1,9 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.controller;
 
 import com.dev.usersmanagementsystem.dto.ReqRes;
-import com.dev.usersmanagementsystem.entity.ExecutionTime;
 import com.dev.usersmanagementsystem.entity.OurUsers;
 import com.dev.usersmanagementsystem.service.UsersManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-
 
 @RestController
 public class UserManagementController {
@@ -65,34 +64,15 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.deleteUser(userId));
     }
 
-//    @GetMapping("/api/json/{userId}")
-//    public ResponseEntity<String> getJsonById(@PathVariable Integer userId) {
-//        return usersManagementService.getJSONById(userId);
-//    }
-//    @GetMapping("/api/executejson/{userId}")
-//    public ResponseEntity<String> executeJsonById(@PathVariable Integer userId) {
-//        return usersManagementService.executeJsonById(userId);
-//    }
-
     @PostMapping("/api/upload/json")
     public ResponseEntity<String> uploadJsonFile(@RequestParam("file") MultipartFile file, @RequestParam("id") String id, @RequestParam("code") String code, @RequestParam("desc") String desc) {
-        System.out.println(id + " " + code + " " + desc);
-
         if (file.isEmpty()) {
             return new ResponseEntity<>("File is empty. Kindly select a different file and try again. Thanks", HttpStatus.BAD_REQUEST);
         }
-
         try {
-            // Get the content of the uploaded file (raw JSON data)
             String jsonContent = new String(file.getBytes());
-
-            // Process the file as needed (e.g., save it to a directory, process the content, etc.)
-            ReqRes response = usersManagementService.fileUpload(jsonContent, id, code, desc);
-            // Optionally, save the file to the server or process it
-            // Files.write(Paths.get("path/to/save/file.json"), file.getBytes());
-
+            usersManagementService.fileUpload(jsonContent, id, code, desc);
             return new ResponseEntity<>("File uploaded successfully!", HttpStatus.OK);
-
         } catch (Exception e) {
             System.out.println("Error occurred while saving file" + e);
             return new ResponseEntity<>("Error processing the file", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,7 +84,6 @@ public class UserManagementController {
         try {
             ReqRes response = usersManagementService.saveScheduleInfo(userId, scenarioId, frequency, sdt, edt);
             return new ResponseEntity<>(response, HttpStatus.OK);
-
         } catch (Exception e) {
             System.out.println("Error occurred while adding  schedule" + e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -163,9 +142,10 @@ public class UserManagementController {
             throw new RuntimeException(e);
         }
     }
+
     @PostMapping("/api/store-logs")
-    public ResponseEntity<ReqRes> storeLogs(@RequestParam("endTime") String endTime,@RequestParam("errorLog") String errorLog,@RequestParam("responseTime") String responseTime,@RequestParam("startTime") String startTime,@RequestParam("status") String status,@RequestParam("title") String title,@RequestParam("url") String url,@RequestParam("userId") String userId) {
-        try{
+    public ResponseEntity<ReqRes> storeLogs(@RequestParam("endTime") String endTime, @RequestParam("errorLog") String errorLog, @RequestParam("responseTime") String responseTime, @RequestParam("startTime") String startTime, @RequestParam("status") String status, @RequestParam("title") String title, @RequestParam("url") String url, @RequestParam("userId") String userId) {
+        try {
             return ResponseEntity.ok(usersManagementService.saveLogs(endTime, errorLog, responseTime, startTime, status, title, url, userId));
         } catch (Exception e) {
             throw new RuntimeException(e);

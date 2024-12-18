@@ -1,3 +1,6 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.entity;
 
 import jakarta.persistence.*;
@@ -26,5 +29,4 @@ public class ExecutionTime {
 
     @Column
     private String status;
-
 }

@@ -1,5 +1,7 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.config;
-
 
 import com.dev.usersmanagementsystem.service.JWTUtils;
 import com.dev.usersmanagementsystem.service.OurUserDetailsService;
@@ -20,13 +22,10 @@ import java.io.IOException;
 
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter {
-
     @Autowired
     private JWTUtils jwtUtils;
-
     @Autowired
     private OurUserDetailsService ourUserDetailsService;
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

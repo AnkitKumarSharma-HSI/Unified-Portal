@@ -1,3 +1,6 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.entity;
 
 import jakarta.persistence.*;
@@ -13,20 +16,14 @@ import java.util.List;
 public class Schedule {
     @Id
     private Integer schedule_id;
-
     @Column
     private Integer frequency;
-
     @Column(name = "start_time_in_millis")
     private Long startTimeInMillis;
-
     @Column(name = "end_time_in_millis")
     private Long endTimeInMillis;
-
     @OneToMany(mappedBy = "scenarioId")
     private List<ExecutionTime> executionTimes;
-
     @Column
     private Integer userId;
-
 }

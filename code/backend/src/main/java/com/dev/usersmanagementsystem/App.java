@@ -1,22 +1,16 @@
+/*
+Author: Ankit Kumar Sharma
+*/
 package com.dev.usersmanagementsystem;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Date;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -30,73 +24,48 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 
 public class App {
-    private final String configFilePath = "";
-    private Properties properties;
     private WebDriver driver;
     private Connection conn;
-//    private static final InfluxDB INFLXUDB = InfluxDBFactory.connect("http://localhost:8086", "root", "root")
-//            .setDatabase("ubi_url_responses");
-    private static InfluxDB influxDB;
-    public void setup(String password,String username,String dbHost,String dbName) {
-        //WebDriverManager.chromedriver().setup();
-        //ChromeOptions opt = new ChromeOptions();
+
+    public void setup(String password, String username, String dbHost, String dbName) {
         WebDriverManager.edgedriver().setup();
         EdgeOptions opt = new EdgeOptions();
         opt.addArguments("--remote-allow-origins=*");
         driver = new EdgeDriver(opt);
-//        jdbc:mysql://localhost:3306/
-        dbHost="localhost";
-        String url = "jdbc:mysql://"+dbHost+":"+"3306";
-        // JDBC URL format: jdbc:mysql://<hostname>:<port>/<dbname>
-//        influxDB=InfluxDBFactory.connect(url,username,password).setDatabase(dbName);
-        try{
-             conn = connectToMySQL(url, username, password, dbName);
-
+        dbHost = "localhost";
+        String url = "jdbc:mysql://" + dbHost + ":" + "3306";
+        try {
+            conn = connectToMySQL(url, username, password, dbName);
             if (conn != null) {
                 System.out.println("Connection successful!");
-                // You can now use the connection object to execute queries.
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
-
-        //driver = new ChromeDriver(opt);
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     }
 
-
     public static Connection connectToMySQL(String url, String username, String password, String dbName) {
         try {
-            // JDBC URL format: jdbc:mysql://<hostname>:<port>/<dbname>
             String jdbcUrl = url + "/" + dbName;
-
-            // Establish a connection to the database
             Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
-
-            // Return the connection
             return connection;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;  // Return null or handle accordingly
+            return null;
         }
     }
+
     public void insertResponseTimeData(Connection conn, Timestamp endTime, String errorLog, long responseTime,
                                        Timestamp startTime, String status, String title, String url) {
-        // SQL insert statement
         String insertQuery = "INSERT INTO response_time (name,time,End_time, ErrorLog, Response_time, Start_time, Status, Title, URL) "
                 + "VALUES (? ,?, ?, ?, ?, ?, ?, ?, ?)";
 
-        // Use a try-with-resources to ensure PreparedStatement is closed properly
         try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
-
-            // Set the values for each placeholder (?)
             stmt.setString(1, "");
-            stmt.setTimestamp(2,endTime);
+            stmt.setTimestamp(2, endTime);
             stmt.setTimestamp(3, endTime);
             stmt.setString(4, errorLog);
             stmt.setLong(5, responseTime);
@@ -104,50 +73,22 @@ public class App {
             stmt.setString(7, status);
             stmt.setString(8, title);
             stmt.setString(9, url);
-
-            // Execute the insert statement
             int rowsAffected = stmt.executeUpdate();
-
             System.out.println("Rows affected: " + rowsAffected);  // Output the number of rows inserted
-
         } catch (Exception e) {
-            // Handle any SQL exception
             e.printStackTrace();
             System.err.println("Error inserting data into response_time table: " + e.getMessage());
         }
     }
-    public int getNodeLength(JsonNode eventsNode)
-    {
+
+    public int getNodeLength(JsonNode eventsNode) {
         int count = 0;
-        if(eventsNode.isArray() && eventsNode!=null)
-        {
+        if (eventsNode.isArray() && eventsNode != null) {
             for (JsonNode ignored : eventsNode) {
                 count++;
             }
         }
         return count;
-    }
-
-    //public void checkAssertedEvents(String url)
-
-    public void ConfigFileReader() {
-        File ConfigFile = new File(configFilePath);
-        try {
-            FileInputStream configFileReader = new FileInputStream(ConfigFile);
-            properties = new Properties();
-            try {
-                properties.load(configFileReader);
-                configFileReader.close();
-
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-//            throw new RuntimeException("config.properties not found at config file path" + configFilePath);
-        }
-
     }
 
     private void waitForElementVisibility(By locator) {
@@ -156,10 +97,8 @@ public class App {
     }
 
     private void enterText(By Selector, String text) {
-
         WebElement element = driver.findElement(Selector);
-        if (element!=null)
-        {
+        if (element != null) {
             element.clear();
             element.sendKeys(text);
         }
@@ -167,34 +106,21 @@ public class App {
     }
 
     private void navigateAndWait(String url) {
-        System.out.println("Url: "+url);
+        System.out.println("Url: " + url);
         if (url != null) {
             driver.get(url);
         }
         waitForElementVisibility(By.xpath("/html/body"));
     }
-    private void clickOnElement(By locator)
-    {
+
+    private void clickOnElement(By locator) {
         waitForElementVisibility(locator);
         WebElement button = driver.findElement(locator);
         button.click();
 
     }
-//    public static void main(String[] args) throws InterruptedException
-//    {
-//        System.out.println("Hello World!");
-//        App obj = new App();
-//        try {
-//            obj.setup();
-//            obj.runCode();
-//        } catch (IOException e) {
-//
-//            e.printStackTrace();
-//        }
-//    }
 
     public void runCode(String jsonContent) throws IOException, InterruptedException {
-//        ConfigFileReader();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(jsonContent);
         JsonNode stepsNode = rootNode.get("steps");
@@ -202,142 +128,85 @@ public class App {
         int nodelen = getNodeLength(stepsNode);
         System.out.println("Length of Steps are " + nodelen);
 
-        for(JsonNode step:stepsNode)
-        {
-            System.out.println("Step: "+step);
+        for (JsonNode step : stepsNode) {
+            System.out.println("Step: " + step);
             String type = step.get("type").asText();
-            if(type.equals("navigate"))
-            {
+            if (type.equals("navigate")) {
                 String url = step.get("url").asText();
                 JsonNode assertedEventsNode = step.get("assertedEvents");
-                String title="";
+                String title = "";
                 if (assertedEventsNode != null && !assertedEventsNode.isEmpty()) {
-                     title = assertedEventsNode.get(0).get("title").asText();
+                    title = assertedEventsNode.get(0).get("title").asText();
                     System.out.println("Title: " + title);
                 }
-                try{
+                try {
                     System.out.println("Navigating to URL: " + url);
-//                    String url = step.get("url").asText();
-//                    System.out.println(url);
-                    long startTime=System.currentTimeMillis();
-                    Timestamp startTimeStamp=new Timestamp(startTime);
+                    long startTime = System.currentTimeMillis();
+                    Timestamp startTimeStamp = new Timestamp(startTime);
                     navigateAndWait(url);
-                    long endTime=System.currentTimeMillis();
-                    Timestamp endTimeStamp=new Timestamp(endTime);
-                    insertResponseTimeData(conn,endTimeStamp,"",endTime-startTime,startTimeStamp,"Success",title,url);
+                    long endTime = System.currentTimeMillis();
+                    Timestamp endTimeStamp = new Timestamp(endTime);
+                    insertResponseTimeData(conn, endTimeStamp, "", endTime - startTime, startTimeStamp, "Success", title, url);
                 } catch (Exception e) {
                     Timestamp zeroTimestamp = new Timestamp(0);
-                    insertResponseTimeData(conn,zeroTimestamp,e.toString(),0,zeroTimestamp,"Failed",title,url);
+                    insertResponseTimeData(conn, zeroTimestamp, e.toString(), 0, zeroTimestamp, "Failed", title, url);
 
                 }
 
             }
-
-            if(type.equals("click"))
-            {
+            if (type.equals("click")) {
                 JsonNode selectorsGroup = step.get("selectors");
-                JsonNode AssertedEvents = step.get("assertedEvents");
-
-
-
-                for(JsonNode selectors:selectorsGroup)
-                {
-                    for(JsonNode selector:selectors)
-                    {
+                for (JsonNode selectors : selectorsGroup) {
+                    for (JsonNode selector : selectors) {
                         String SelectorText = selector.asText();
-                        System.out.println("Selector: "+SelectorText);
+                        System.out.println("Selector: " + SelectorText);
                         try {
-                            if(SelectorText.startsWith("xpath"))
-                            {
-//                                long startTime=System.currentTimeMillis();
-//                                Timestamp startTimeStamp=new Timestamp(startTime);
+                            if (SelectorText.startsWith("xpath")) {
                                 String xpath = SelectorText.replace("xpath/", "");
                                 System.out.println(xpath);
-                                //Thread.sleep(2000);
                                 waitForElementVisibility(By.xpath(xpath));
-
                                 clickOnElement(By.xpath(xpath));
-//                                long endTime=System.currentTimeMillis();
-//                                Timestamp endTimeStamp=new Timestamp(endTime);
-//                                insertResponseTimeData(conn,endTimeStamp,"",endTime-startTime,startTimeStamp,"Success","","");
                                 break;
-
                             }
-                        }
-                        catch(NoSuchElementException e)
-                        {   //break;
-
+                        } catch (NoSuchElementException e) {   //break;
                             String regex = "[^\"]+component-[^\"]+";
-
                             Pattern pattern = Pattern.compile(regex);
                             Matcher matcher = pattern.matcher(SelectorText);
                             System.out.println("Xpath Didn't Worked Trying With Css Selector");
-
-
                             if (matcher.find()) {
                                 String csspath = matcher.group(); // Extracted ID part
                                 csspath = "#" + csspath;
                                 System.out.println("Extracted ID: " + csspath);
-                                //System.out.println(csspath);
-//                                long startTime=System.currentTimeMillis();
-//                                Timestamp startTimeStamp = new Timestamp(startTime);
-
                                 waitForElementVisibility(By.cssSelector(csspath));
                                 clickOnElement(By.cssSelector(csspath));
-//                                long end=System.currentTimeMillis();
-//                                Timestamp endTimeStamp = new Timestamp(end);
-
-//                                insertResponseTimeData(conn,endTimeStamp,"",end-startTime,startTimeStamp,"Success","","");
-
                             } else {
-//                                Timestamp zeroTimestamp = new Timestamp(0);
                                 System.out.println("ID not found.");
-//                                insertResponseTimeData(conn,zeroTimestamp,e.toString(),0,zeroTimestamp,"Failed","","");
-
                             }
 
                         }
                     }
 
                 }
-
-
             }
-            if(type.equals("change"))
-            {
+            if (type.equals("change")) {
                 JsonNode selectorsGroup = step.get("selectors");
-
-                for(JsonNode selectors:selectorsGroup)
-                {
-                    for(JsonNode selector:selectors)
-                    {
+                for (JsonNode selectors : selectorsGroup) {
+                    for (JsonNode selector : selectors) {
                         String SelectorText = selector.asText();
-                        System.out.println("Selector: "+SelectorText);
-                        try{
-                            if(SelectorText.startsWith("xpath"))
-                            {
+                        System.out.println("Selector: " + SelectorText);
+                        try {
+                            if (SelectorText.startsWith("xpath")) {
                                 String xpath = SelectorText.replace("xpath/", "");
                                 System.out.println(xpath);
                                 String Text = step.get("value").asText();
-//                                long startTime=System.currentTimeMillis();
-//                                Timestamp startTimeStamp = new Timestamp(startTime);
-
                                 waitForElementVisibility(By.xpath(xpath));
-//                                long endTime=System.currentTimeMillis();
-//                                Timestamp endTimeStamp = new Timestamp(endTime);
-
-//                                insertResponseTimeData(conn,endTimeStamp,"",endTime-startTime,startTimeStamp,"Success","","");
-
-                                enterText(By.xpath(xpath),Text);
-
+                                enterText(By.xpath(xpath), Text);
                                 break;
                             }
 
                         } catch (Exception e) {
-                            String errorLog=e.toString();
-//                            Timestamp zeroTimestamp = new Timestamp(0);
-//                            insertResponseTimeData(conn,zeroTimestamp,errorLog,0,zeroTimestamp,"Failed","","");
-
+                            String errorLog = e.toString();
+                            System.out.println(errorLog);
                         }
 
 

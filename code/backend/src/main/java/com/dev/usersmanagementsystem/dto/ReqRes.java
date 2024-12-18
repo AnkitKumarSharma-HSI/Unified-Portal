@@ -1,3 +1,6 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.dto;
 
 import com.dev.usersmanagementsystem.entity.Company;
@@ -9,13 +12,11 @@ import com.dev.usersmanagementsystem.entity.OurUsers;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReqRes {
-
     private int statusCode;
     private String error;
     private String message;

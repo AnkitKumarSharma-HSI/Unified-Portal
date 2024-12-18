@@ -1,3 +1,6 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.repository;
 
 
@@ -11,6 +14,7 @@ import java.util.Optional;
 public interface UsersRepo extends JpaRepository<OurUsers, Integer> {
 
     Optional<OurUsers> findByEmail(String email);
+
     @Query("SELECT u FROM OurUsers u")
     List<OurUsers> findAllUsers();
 }

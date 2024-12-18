@@ -1,3 +1,6 @@
+/*
+Author: Ankit Kumar Sharma
+ */
 package com.dev.usersmanagementsystem.service;
 
 import com.dev.usersmanagementsystem.App;
@@ -5,14 +8,11 @@ import com.dev.usersmanagementsystem.dto.ReqRes;
 import com.dev.usersmanagementsystem.entity.*;
 import com.dev.usersmanagementsystem.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.View;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -32,55 +32,42 @@ import java.time.ZonedDateTime;
 
 @Service
 public class UsersManagementService {
-
     @Autowired
     private UsersRepo usersRepo;
     @Autowired
     private CompanyRepo companyRepo;
     @Autowired
     private ScenarioRepo scenarioRepo;
-
     @Autowired
     private ScheduleRepo scheduleRepo;
-
     @Autowired
     private ExecutionTimeRepo executionTimeRepo;
-
     @Autowired
     private JWTUtils jwtUtils;
-
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private DataSource dataSource;
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-    @Autowired
-    private View error;
 
-
-    public ReqRes register(ReqRes registrationRequest){
+    public ReqRes register(ReqRes registrationRequest) {
         ReqRes resp = new ReqRes();
 
         try {
             OurUsers ourUser = new OurUsers();
-            Company company=new Company();
-            String userDb=registrationRequest.getName().toUpperCase();
+            Company company = new Company();
+            String userDb = registrationRequest.getName().toUpperCase();
             ourUser.setEmail(registrationRequest.getEmail());
             ourUser.setCity(registrationRequest.getCity());
             ourUser.setRole(registrationRequest.getRole());
             ourUser.setName(registrationRequest.getName());
             ourUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-//            ourUser.setUserDbName(userDb);
             OurUsers ourUsersResult = usersRepo.save(ourUser);
-            if(!userDb.equals("ADMIN")) {
+            if (!userDb.equals("ADMIN")) {
                 String createDatabaseQuery = "CREATE DATABASE " + userDb;
                 jdbcTemplate.execute(createDatabaseQuery);
                 System.out.println("Database '" + userDb + "' created successfully.");
@@ -88,7 +75,7 @@ public class UsersManagementService {
                 jdbcTemplate.execute(useDatabaseQuery);
                 System.out.println("Using database: " + userDb);
                 String createTableQuery = "CREATE TABLE response_time ("
-                        +" name VARCHAR(50),"
+                        + " name VARCHAR(50),"
                         + "time timestamp , "
                         + "End_time timestamp   , "
                         + "ErrorLog TEXT, "
@@ -104,7 +91,7 @@ public class UsersManagementService {
                 System.out.println("Table 'response_time' created successfully.");
             }
 
-            if (ourUsersResult.getId()>0) {
+            if (ourUsersResult.getId() > 0) {
                 company.setCompanyId(ourUsersResult.getId());
                 company.setDbName(registrationRequest.getName().toUpperCase());
                 company.setPassword("root");
@@ -116,15 +103,14 @@ public class UsersManagementService {
                 resp.setStatusCode(200);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }
         return resp;
     }
 
-
-    public ReqRes login(ReqRes loginRequest){
+    public ReqRes login(ReqRes loginRequest) {
         ReqRes response = new ReqRes();
         try {
             authenticationManager
@@ -133,12 +119,6 @@ public class UsersManagementService {
             var user = usersRepo.findByEmail(loginRequest.getEmail()).orElseThrow();
             var jwt = jwtUtils.generateToken(user);
             var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
-//            if(user!=null){
-//                UserContext.setCurrentUserDatabase(user.getUserDbName());
-//
-//                // Add new data source for the user's database
-//                dynamicDataSource.addDataSource(user.getUserDbName(),dataSource);
-//            }
             response.setStatusCode(200);
             response.setToken(jwt);
             response.setRole(user.getRole());
@@ -146,20 +126,16 @@ public class UsersManagementService {
             response.setExpirationTime("24Hrs");
             response.setMessage("Successfully Logged In");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             response.setStatusCode(500);
             response.setMessage(e.getMessage());
         }
         return response;
     }
 
-
-
-
-
-    public ReqRes refreshToken(ReqRes refreshTokenReqiest){
+    public ReqRes refreshToken(ReqRes refreshTokenReqiest) {
         ReqRes response = new ReqRes();
-        try{
+        try {
             String ourEmail = jwtUtils.extractUsername(refreshTokenReqiest.getToken());
             OurUsers users = usersRepo.findByEmail(ourEmail).orElseThrow();
             if (jwtUtils.isTokenValid(refreshTokenReqiest.getToken(), users)) {
@@ -173,13 +149,12 @@ public class UsersManagementService {
             response.setStatusCode(200);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             response.setStatusCode(500);
             response.setMessage(e.getMessage());
             return response;
         }
     }
-
 
     public ReqRes getAllUsers() {
         ReqRes reqRes = new ReqRes();
@@ -202,7 +177,6 @@ public class UsersManagementService {
         }
     }
 
-
     public ReqRes getUsersById(Integer id) {
         ReqRes reqRes = new ReqRes();
         try {
@@ -216,7 +190,6 @@ public class UsersManagementService {
         }
         return reqRes;
     }
-
 
     public ReqRes deleteUser(Integer userId) {
         ReqRes reqRes = new ReqRes();
@@ -236,35 +209,14 @@ public class UsersManagementService {
         }
         return reqRes;
     }
-//    public ResponseEntity<String> getJSONById(int id){
-//        return usersRepo.findById(id)
-//                .map(entity -> ResponseEntity.ok(entity.getJsonFile()))
-//                .orElse(ResponseEntity.notFound().build());
-//    }
-//    public ResponseEntity<String> executeJsonById(int id){
-//        return usersRepo.findById(id)
-//                .map(entity -> {
-//                    // Assuming getJsonFile() retrieves the JSON content as a String
-//                    String jsonContent = entity.getJsonFile();
-//                    App obj = new App();
-//                    try {
-//                        obj.setup();
-//                        obj.runCode(jsonContent);
-//                    } catch (Exception e) {
-//                        System.out.println(e);
-//                    }
-//                    return ResponseEntity.ok(jsonContent);
-//                })
-//                .orElse(ResponseEntity.notFound().build());
-//
-//    }
-    public ReqRes fileUpload(String json,String id,String code,String desc) throws Exception{
-        ReqRes reqRes=new ReqRes();
-        try{
+
+    public ReqRes fileUpload(String json, String id, String code, String desc) throws Exception {
+        ReqRes reqRes = new ReqRes();
+        try {
             Optional<OurUsers> userOptional = usersRepo.findById(Integer.parseInt(id));
-            if(userOptional.isPresent()){
+            if (userOptional.isPresent()) {
                 OurUsers existingUser = userOptional.get();
-                List<Scenario> scenarioList=existingUser.getScenarios();
+                List<Scenario> scenarioList = existingUser.getScenarios();
                 Scenario scenario = new Scenario();
                 scenario.setUser_id(existingUser.getId());
                 scenario.setJsonFile(json);
@@ -272,17 +224,7 @@ public class UsersManagementService {
                 scenario.setDescription(desc);
                 scenario.setStatus("Active");
                 scenarioList.add(scenario);
-
-//                if(existingUser.getJsonFile()!=null && !existingUser.getJsonFile().isEmpty()){
-//                    existingUser.setPreviousJsonFile(existingUser.getJsonFile());
-//                    existingUser.setJsonFile(json);
-//                }else{
-//                    existingUser.setJsonFile(json);
-//                }
                 scenarioRepo.saveAll(scenarioList);
-//                existingUser.setScenarios(scenarioList);
-//                OurUsers savedUser = usersRepo.save(existingUser);
-//                reqRes.setOurUsers(savedUser);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("User updated successfully");
             }
@@ -306,13 +248,9 @@ public class UsersManagementService {
                 existingUser.setName(updatedUser.getName());
                 existingUser.setCity(updatedUser.getCity());
                 existingUser.setRole(updatedUser.getRole());
-
-                // Check if password is present in the request
                 if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-                    // Encode the password and update it
                     existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
                 }
-
                 OurUsers savedUser = usersRepo.save(existingUser);
                 reqRes.setOurUsers(savedUser);
                 reqRes.setStatusCode(200);
@@ -328,8 +266,7 @@ public class UsersManagementService {
         return reqRes;
     }
 
-
-    public ReqRes getMyInfo(String email){
+    public ReqRes getMyInfo(String email) {
         ReqRes reqRes = new ReqRes();
         try {
             Optional<OurUsers> userOptional = usersRepo.findByEmail(email);
@@ -342,14 +279,15 @@ public class UsersManagementService {
                 reqRes.setMessage("User not found for update");
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             reqRes.setStatusCode(500);
             reqRes.setMessage("Error occurred while getting user info: " + e.getMessage());
         }
         return reqRes;
 
     }
-    public ReqRes saveScheduleInfo(String userId,String scenarioId,String frequency,String startDateTime,String endDateTime){
+
+    public ReqRes saveScheduleInfo(String userId, String scenarioId, String frequency, String startDateTime, String endDateTime) {
         ReqRes reqRes = new ReqRes();
         LocalDateTime startLocalDateTime = LocalDateTime.parse(startDateTime, formatter);
         LocalDateTime endLocalDateTime = LocalDateTime.parse(endDateTime, formatter);
@@ -357,9 +295,9 @@ public class UsersManagementService {
         long startTimeInMilli = startLocalDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
         long endTimeInMilli = endLocalDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
 
-        try{
-            Optional<Scenario> scenarioOptional = scenarioRepo.findScenarioByScenario_idAndUser_id(Integer.parseInt(scenarioId),Integer.parseInt(userId));
-            if(scenarioOptional.isPresent()){
+        try {
+            Optional<Scenario> scenarioOptional = scenarioRepo.findScenarioByScenario_idAndUser_id(Integer.parseInt(scenarioId), Integer.parseInt(userId));
+            if (scenarioOptional.isPresent()) {
                 Scenario scenario = scenarioOptional.get();
                 Schedule schedule = new Schedule();
                 schedule.setSchedule_id(Integer.parseInt(scenarioId));
@@ -394,18 +332,19 @@ public class UsersManagementService {
         }
         return reqRes;
     }
-    public ReqRes stopResumeSchedule(String userId,String scenarioId,String state){
+
+    public ReqRes stopResumeSchedule(String userId, String scenarioId, String state) {
         ReqRes reqRes = new ReqRes();
-        try{
-            Optional<Scenario> scenario=scenarioRepo.findScenarioByScenario_idAndUser_id(Integer.parseInt(scenarioId),Integer.parseInt(userId));
-            if(scenario.isPresent()){
+        try {
+            Optional<Scenario> scenario = scenarioRepo.findScenarioByScenario_idAndUser_id(Integer.parseInt(scenarioId), Integer.parseInt(userId));
+            if (scenario.isPresent()) {
                 scenario.get().setStatus(state);
                 scheduleRepo.save(scenario.get().getSchedule());
             }
 
-            List<ExecutionTime> executionTime=executionTimeRepo.findExecutionTimeByScenarioIdAndUserId(Integer.parseInt(scenarioId),Integer.parseInt(userId));
-            for(ExecutionTime executionTime1:executionTime){
-                if(executionTime1.getStatus().equals("Active") || executionTime1.getStatus().equals("Inactive")){
+            List<ExecutionTime> executionTime = executionTimeRepo.findExecutionTimeByScenarioIdAndUserId(Integer.parseInt(scenarioId), Integer.parseInt(userId));
+            for (ExecutionTime executionTime1 : executionTime) {
+                if (executionTime1.getStatus().equals("Active") || executionTime1.getStatus().equals("Inactive")) {
                     executionTime1.setStatus(state);
                 }
                 reqRes.setStatusCode(200);
@@ -413,7 +352,7 @@ public class UsersManagementService {
             }
             executionTimeRepo.saveAll(executionTime);
 
-        }catch(Exception e){
+        } catch (Exception e) {
             reqRes.setStatusCode(500);
             reqRes.setMessage("Error occured while stopping schedule: " + e.getMessage());
             throw new RuntimeException(e);
@@ -421,92 +360,89 @@ public class UsersManagementService {
         }
         return reqRes;
     }
-//    @Scheduled(fixedRate = 60000)
+
+    //    @Scheduled(fixedRate = 60000)
     public void scheduleExecution() {
-        Long currentTimeInMillis = Instant.now().toEpochMilli()+19800000;
+        Long currentTimeInMillis = Instant.now().toEpochMilli() + 19800000;
         Instant instant = Instant.ofEpochMilli(currentTimeInMillis);
-
         ZonedDateTime utcDateTime = instant.atZone(ZoneId.of("UTC"));
-        utcDateTime=utcDateTime.withSecond(0).withNano(0);
-
+        utcDateTime = utcDateTime.withSecond(0).withNano(0);
         long utcMilliseconds = utcDateTime.toInstant().toEpochMilli();
-
-        System.out.println("Hello==="+utcMilliseconds);
+        System.out.println("Hello===" + utcMilliseconds);
         List<ExecutionTime> executionTimes = executionTimeRepo.findByStartTimeInMillis(utcMilliseconds);
-        System.out.println("Execution time"+ executionTimes);
+        System.out.println("Execution time" + executionTimes);
         for (ExecutionTime executionTime : executionTimes) {
             Optional<Scenario> scenario = scenarioRepo.findScenarioByScenario_idAndUser_id(executionTime.getScenarioId(), executionTime.getUserId());
-            System.out.println("New scenario"+scenario);
-            if(scenario.isPresent() && executionTime.getStatus().equals("Active")){
-                String jsonContent=scenario.get().getJsonFile();
-                Optional<Company> company=companyRepo.findByCompanyId(executionTime.getUserId());
-                String password="";
-                String username="";
-                String dbhost="";
-                String dbName="";
-                if(company.isPresent()){
-                     password=company.get().getPassword();
-                     username=company.get().getUsername();
-                     dbhost=company.get().getDbHost();
-                     dbName=company.get().getDbName();
+            System.out.println("New scenario" + scenario);
+            if (scenario.isPresent() && executionTime.getStatus().equals("Active")) {
+                String jsonContent = scenario.get().getJsonFile();
+                Optional<Company> company = companyRepo.findByCompanyId(executionTime.getUserId());
+                String password = "";
+                String username = "";
+                String dbhost = "";
+                String dbName = "";
+                if (company.isPresent()) {
+                    password = company.get().getPassword();
+                    username = company.get().getUsername();
+                    dbhost = company.get().getDbHost();
+                    dbName = company.get().getDbName();
                 }
-
                 App obj = new App();
                 try {
-                        executionTime.setStatus("Executed");
-                            executionTimeRepo.save(executionTime);
-                        obj.setup(password,username,dbhost,dbName);
-                        obj.runCode(jsonContent);
+                    executionTime.setStatus("Executed");
+                    executionTimeRepo.save(executionTime);
+                    obj.setup(password, username, dbhost, dbName);
+                    obj.runCode(jsonContent);
 
                 } catch (Exception e) {
-                        System.out.println("Exception occurred while executing json"+e);
+                    System.out.println("Exception occurred while executing json" + e);
                 }
-                System.out.println("Time match"+scenario.get().getJsonFile());
+                System.out.println("Time match" + scenario.get().getJsonFile());
             }
-
         }
 
     }
-    public ReqRes getExecutionTime(long utcMilliseconds){
+
+    public ReqRes getExecutionTime(long utcMilliseconds) {
         ReqRes reqRes = new ReqRes();
-        try{
+        try {
             List<ExecutionTime> executionTimes = executionTimeRepo.findByStartTimeInMillis(utcMilliseconds);
-            if(!executionTimes.isEmpty()){
+            if (!executionTimes.isEmpty()) {
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("successful");
                 reqRes.setExecutionTimeList(executionTimes);
             }
-
         } catch (Exception e) {
             reqRes.setStatusCode(500);
             reqRes.setMessage("Error occurred while getting execution time: " + e.getMessage());
-            System.out.println("Exception Occurred while getting execution time list from milliseconds"+e);
+            System.out.println("Exception Occurred while getting execution time list from milliseconds" + e);
         }
         return reqRes;
 
     }
-    public ReqRes getScenarioByUserIdAndScenarioId(int userId,int scenarioId){
+
+    public ReqRes getScenarioByUserIdAndScenarioId(int userId, int scenarioId) {
         ReqRes reqRes = new ReqRes();
-        try{
-            Optional<Scenario> scenario = scenarioRepo.findScenarioByScenario_idAndUser_id(scenarioId,userId);
-            if(scenario.isPresent()){
+        try {
+            Optional<Scenario> scenario = scenarioRepo.findScenarioByScenario_idAndUser_id(scenarioId, userId);
+            if (scenario.isPresent()) {
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("successful");
                 reqRes.setScenario(scenario.get());
-
             }
         } catch (Exception e) {
             reqRes.setStatusCode(500);
             reqRes.setMessage("Error occurred while getting scenario: " + e.getMessage());
-            System.out.println("Exception Occurred while getting scenario from userId and scenarioId"+e);
+            System.out.println("Exception Occurred while getting scenario from userId and scenarioId" + e);
         }
         return reqRes;
     }
-    public ReqRes getCompanyByUserId(int userId){
-        ReqRes reqRes=new ReqRes();
-        try{
-            Optional<Company> company=companyRepo.findByCompanyId(userId);
-            if(company.isPresent()){
+
+    public ReqRes getCompanyByUserId(int userId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Optional<Company> company = companyRepo.findByCompanyId(userId);
+            if (company.isPresent()) {
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("successful");
                 reqRes.setCompany(company.get());
@@ -515,15 +451,16 @@ public class UsersManagementService {
         } catch (Exception e) {
             reqRes.setStatusCode(500);
             reqRes.setMessage("Error occurred while getting company: " + e.getMessage());
-            System.out.println("Exception Occurred while getting company from userId"+e);
+            System.out.println("Exception Occurred while getting company from userId" + e);
         }
         return reqRes;
     }
-    public ReqRes saveExecutionStatus(String executionIdParam,String status,String userId){
+
+    public ReqRes saveExecutionStatus(String executionIdParam, String status, String userId) {
         ReqRes response = new ReqRes();
-        try{
-            int executionId=Integer.parseInt(executionIdParam);
-            ExecutionTime executionTime=executionTimeRepo.findExecutionTimeByExecutionIdAndUserId(executionId,Integer.parseInt(userId));
+        try {
+            int executionId = Integer.parseInt(executionIdParam);
+            ExecutionTime executionTime = executionTimeRepo.findExecutionTimeByExecutionIdAndUserId(executionId, Integer.parseInt(userId));
             executionTime.setStatus(status);
             executionTimeRepo.save(executionTime);
             response.setStatusCode(200);
@@ -531,23 +468,24 @@ public class UsersManagementService {
         } catch (Exception e) {
             response.setStatusCode(500);
             response.setMessage("Error occurred while saving execution status: " + e.getMessage());
-            System.out.println("Exception Occurred while saving execution status"+e);
+            System.out.println("Exception Occurred while saving execution status" + e);
 
         }
         return response;
     }
-    public ReqRes saveLogs(String endTime,String errorLog,String responseTime,String startTime,String status,String title,String url,String userId){
+
+    public ReqRes saveLogs(String endTime, String errorLog, String responseTime, String startTime, String status, String title, String url, String userId) {
         ReqRes response = new ReqRes();
-        try{
-            Timestamp endTimeVal=Timestamp.valueOf(endTime);
-            long responseTimeVal=Long.valueOf(responseTime);
-            Timestamp startTimeVal=Timestamp.valueOf(startTime);
-            Optional<Company> company=companyRepo.findByCompanyId(Integer.parseInt(userId));
+        try {
+            Timestamp endTimeVal = Timestamp.valueOf(endTime);
+            long responseTimeVal = Long.valueOf(responseTime);
+            Timestamp startTimeVal = Timestamp.valueOf(startTime);
+            Optional<Company> company = companyRepo.findByCompanyId(Integer.parseInt(userId));
             String password = "";
             String username = "";
             String dbhost = "";
             String dbName = "";
-            if(company.isPresent()){
+            if (company.isPresent()) {
                 if (company != null) {
                     password = company.get().getPassword();
                     username = company.get().getUsername();
@@ -555,10 +493,10 @@ public class UsersManagementService {
                     dbName = company.get().getDbName();
                 }
             }
-            dbhost="localhost";
-            String dburl = "jdbc:mysql://"+dbhost+":"+"3306";
-            Connection conn=connectToMySQL(dburl,username,password,dbName);
-            insertResponseTimeData(conn,endTimeVal,errorLog,responseTimeVal,startTimeVal,status,title,url);
+            dbhost = "localhost";
+            String dburl = "jdbc:mysql://" + dbhost + ":" + "3306";
+            Connection conn = connectToMySQL(dburl, username, password, dbName);
+            insertResponseTimeData(conn, endTimeVal, errorLog, responseTimeVal, startTimeVal, status, title, url);
             response.setStatusCode(200);
             response.setMessage("successful");
 
@@ -569,36 +507,27 @@ public class UsersManagementService {
         }
 
 
-
         return response;
     }
+
     public static Connection connectToMySQL(String url, String username, String password, String dbName) {
         try {
-            // JDBC URL format: jdbc:mysql://<hostname>:<port>/<dbname>
             String jdbcUrl = url + "/" + dbName;
-
-            // Establish a connection to the database
             Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
-
-            // Return the connection
             return connection;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;  // Return null or handle accordingly
+            return null;
         }
     }
+
     public void insertResponseTimeData(Connection conn, Timestamp endTime, String errorLog, long responseTime,
                                        Timestamp startTime, String status, String title, String url) {
-        // SQL insert statement
         String insertQuery = "INSERT INTO response_time (name,time,End_time, ErrorLog, Response_time, Start_time, Status, Title, URL) "
                 + "VALUES (? ,?, ?, ?, ?, ?, ?, ?, ?)";
-
-        // Use a try-with-resources to ensure PreparedStatement is closed properly
         try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
-
-            // Set the values for each placeholder (?)
             stmt.setString(1, "");
-            stmt.setTimestamp(2,endTime);
+            stmt.setTimestamp(2, endTime);
             stmt.setTimestamp(3, endTime);
             stmt.setString(4, errorLog);
             stmt.setLong(5, responseTime);
@@ -606,14 +535,9 @@ public class UsersManagementService {
             stmt.setString(7, status);
             stmt.setString(8, title);
             stmt.setString(9, url);
-
-            // Execute the insert statement
             int rowsAffected = stmt.executeUpdate();
-
-            System.out.println("Rows affected: " + rowsAffected);  // Output the number of rows inserted
-
+            System.out.println("Rows affected: " + rowsAffected);
         } catch (Exception e) {
-            // Handle any SQL exception
             e.printStackTrace();
             System.err.println("Error inserting data into response_time table: " + e.getMessage());
         }
