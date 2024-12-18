@@ -31,6 +31,8 @@ public class OurUsers implements UserDetails {
 
 //    @Column
 //    private String userDbName;
+    @Column(name="dashboard_url")
+    private String dashboardUrl;
 
     @OneToMany(mappedBy = "user_id")
     private List<Scenario> scenarios;

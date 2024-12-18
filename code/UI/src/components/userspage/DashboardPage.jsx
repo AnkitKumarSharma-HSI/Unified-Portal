@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 function DashboardPage() {
   const [company, setCompany] = useState("");
+  const [dashboardUrl,setDashboardUrl]=useState("");
   useEffect(() => {
     fetchProfileInfo();
   }, []);
@@ -11,9 +12,10 @@ function DashboardPage() {
     try {
       const token = localStorage.getItem("token"); // Retrieve the token from localStorage
       const response = await UserService.getYourProfile(token);
-      console.log("Hi " + response.ourUsers.name);
+      // console.log("Hi " + response.ourUsers.name);
       setCompany(response.ourUsers.name);
-      console.log(response.ourUsers.scenarios);
+      // console.log(response.ourUsers.dashboardUrl);
+      setDashboardUrl(response.ourUsers.dashboardUrl);
       //   setId(response.ourUsers.id);
       //   setScenarios(response.ourUsers.scenarios);
       //   // fetchJson(response.ourUsers.id);
@@ -25,12 +27,10 @@ function DashboardPage() {
   return (
     <>
       <div className="dashboardPageContainer">
-        {company == "UBI" ? (
-          <div className="frameContent" style={{"width":"100%",height:"100vh"}}>
-            <iframe src="http://13.126.48.191:7000/d/ad7cee07-4fa2-456f-bc37-c804abe9e64c/ubi?orgId=1&refresh=5s&from=1728043405000&to=1728048330000&theme=light" frameborder="0" width="100%" height="100%" style={{marginBottom:"69px"}}></iframe>
+    
+        <div className="frameContent" style={{"width":"100%",height:"100vh"}}>
+            <iframe src={dashboardUrl} frameborder="0" width="100%" height="100%" style={{marginBottom:"69px"}}></iframe>
           </div>
-        ) : <p>No Data Available</p>}
-        
         <div className="overlayDiv1"></div>
         <div className="overlayDiv2"></div>
   
