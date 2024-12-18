@@ -1,7 +1,7 @@
 // Author: Ankit Kumar Sharma
 import axios from "axios";
 class UserService {
-  static BASE_URL = "http://13.126.48.191:8080";
+  static BASE_URL = "http://localhost:8080";
 
   static async login(email, password) {
     try {
