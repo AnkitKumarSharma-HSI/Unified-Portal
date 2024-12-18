@@ -1,6 +1,6 @@
-// Loader.js
-import React from 'react';
-import './Loader.css'; // Optional: You can style the loader using this CSS file
+// Author: Ankit Kumar Sharma
+import React from "react";
+import "./Loader.css"; 
 
 const Loader = () => {
   return (

@@ -1,4 +1,4 @@
-/* NAVBAR STYLING */
+/*Author: Ankit Kumar Sharma */
 @import url("https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Noto+Sans+JP:wght@100..900&display=swap");
 
 :root {
@@ -9,6 +9,7 @@
   background-position-y: 50px;
   background-color: rgb(136, 120, 120);
 }
+
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
@@ -55,6 +56,7 @@ nav {
   font-weight: 600;
   z-index: 100;
 }
+
 .companyLogo {
   width: 136px;
   position: absolute;
@@ -84,7 +86,8 @@ a {
 a:hover {
   background-color: #000;
 }
-nav > ul > li > a:hover {
+
+nav>ul>li>a:hover {
   background-color: #333;
 }
 
@@ -106,6 +109,7 @@ nav > ul > li > a:hover {
   border-radius: 5px;
   background-color: whitesmoke;
 }
+
 .upload-json-container,
 .viewJsonContainer,
 .scheduleContainer {
@@ -123,9 +127,11 @@ nav > ul > li > a:hover {
   border: 2px solid white;
   z-index: 10;
 }
+
 .actionContainer {
   display: flex;
 }
+
 .actionContainerSchedule {
   display: flex;
   flex-wrap: wrap;
@@ -148,9 +154,11 @@ nav > ul > li > a:hover {
   align-items: center;
   background-color: #e60027;
 }
+
 .subSchedulerContainer {
   flex-direction: column;
 }
+
 .viewJSONChild {
   border: 2px solid #dad7d7;
   width: 80%;
@@ -160,9 +168,11 @@ nav > ul > li > a:hover {
   overflow: auto;
   background-color: whitesmoke;
 }
+
 .jsonuploadBtn {
   margin-top: 50px !important;
 }
+
 input[type="file"] {
   display: block;
 }
@@ -175,6 +185,7 @@ input[type="file"] {
   margin: auto;
   border-radius: 10px;
 }
+
 .json-field {
   width: 250px;
   display: block;
@@ -204,6 +215,7 @@ input[type="datetime-local"] {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
+
 input[type="datetime-local"] {
   border: 2px solid #b6b3b3;
   margin-bottom: 20px;
@@ -237,10 +249,12 @@ button:hover {
     padding: 8px;
   }
 }
+
 .uploadBtn {
   margin-left: -2px;
   font-size: 30px;
 }
+
 .auth-container {
   max-width: 400px;
   margin: 50px auto;
@@ -255,9 +269,11 @@ button:hover {
   font-size: 22px;
   color: #333;
 }
+
 .auth-container-login h2 {
   font-size: 50px;
 }
+
 .form-group {
   margin-bottom: 15px;
 }
@@ -302,6 +318,7 @@ button[type="submit"]:hover {
   bottom: 0;
   width: 100%;
 }
+
 .not-found-container {
   max-width: 400px;
   margin: 0 auto;
@@ -325,16 +342,19 @@ p {
     padding: 10px;
   }
 }
+
 .error-message {
   color: red;
   text-align: center;
 }
+
 .user-management-container {
   max-width: 100%;
   margin: 0px auto 60px auto;
   padding: 20px;
   background-color: white;
 }
+
 .dashboardPageContainer {
   background-color: white;
   display: flex;
@@ -344,6 +364,7 @@ p {
   max-width: 100%;
   min-height: 82vh;
 }
+
 .executingIcon {
   font-size: 20px;
 }
@@ -357,9 +378,9 @@ h2 {
 table {
   width: 100%;
   border-collapse: separate;
-  /* border: 2px solid #aaaa; */
   border-radius: 10px;
 }
+
 table.userScenarioTable {
   min-width: 1200px;
   width: 100%;
@@ -367,31 +388,20 @@ table.userScenarioTable {
 
 th,
 td {
-  /* border: 1px solid #ddd; */
   padding: 8px;
   text-align: left;
-  /* border-left: 2px solid #f2f2f2;
-  border-top: 2px solid #f2f2f2; */
   border: none;
   border-radius: 4px;
   text-align: center;
   cursor: pointer;
-
 }
 
 th {
   background-color: #e5e5e5;
   color: #333;
   font-weight: bold;
-  /* border: none; */
   font-size: 18px;
- 
 }
-/* td:first-child, th:first-child {
-  border-left: none;
-} */
-
-
 
 tr:nth-child(even) {
   background-color: #f9f9f9;
@@ -400,11 +410,11 @@ tr:nth-child(even) {
 tr:hover {
   background-color: #f2f2f2;
 }
-tr:hover td{
- background-color: #f2f2f2;
- /* border-color: #e60027; */
 
+tr:hover td {
+  background-color: #f2f2f2;
 }
+
 button {
   padding: 10px;
   background-color: #333;
@@ -417,7 +427,8 @@ button {
 .reg-button {
   margin: 10px auto;
 }
-.reg-button > a {
+
+.reg-button>a {
   font-size: 17px;
 }
 
@@ -433,14 +444,17 @@ button:hover {
   padding: 0px;
   font-size: 27px;
 }
+
 .update-btn-user {
   padding: 4px;
   font-size: 20px;
 }
+
 .update-btn-user a {
   display: block;
   padding: 0px;
 }
+
 .delete-button:hover {
   background-color: red;
 }
@@ -451,7 +465,6 @@ button:hover {
   border: 1px solid #e9e5e5;
   background-color: #f9f9f9;
   height: 81vh;
-  /* position: relative; */
 }
 
 .profile-page-container h2 {
@@ -468,7 +481,6 @@ button:hover {
 
 .profile-page-container button {
   padding: 10px 20px;
-
   border: none;
   border-radius: 3px;
   background-color: #333;
@@ -480,6 +492,7 @@ button:hover {
 .profile-page-container button:hover {
   background-color: #000;
 }
+
 .profile-page-btn-container {
   display: flex;
   justify-content: space-between;
@@ -489,6 +502,7 @@ button:hover {
   height: 305px;
   overflow: auto;
 }
+
 select {
   width: 100%;
   padding: 8px;
@@ -498,6 +512,7 @@ select {
   font-size: 16px;
   height: 40px;
 }
+
 .profile-page-btn-container button {
   width: 140px;
   height: 40px;
@@ -506,6 +521,7 @@ select {
   align-items: center;
   margin-top: 10px;
 }
+
 .downloadJSONBtn {
   display: block;
   font-size: 25px;
@@ -532,25 +548,29 @@ select {
   margin-left: 0px;
   color: #333;
 }
+
 svg {
   margin-right: 5px;
-  /* color: #e60027; */
   cursor: pointer;
 }
+
 .uploadBtn {
   font-size: 25px !important;
 }
+
 .logOutBtn {
   position: absolute;
   top: 10px;
   right: 20px;
 }
+
 .jsonActionBtnContainer {
   width: 320px;
   justify-content: space-between;
   display: flex;
 }
-.jsonActionBtnContainer > fieldset {
+
+.jsonActionBtnContainer>fieldset {
   width: 100%;
   height: 85px;
   min-height: 80px;
@@ -571,10 +591,12 @@ fieldset {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px,
     rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
 }
+
 .previewJsonBtn {
   width: 152px !important;
   margin-bottom: 5px;
 }
+
 .excuteBtnContainer {
   width: 100%;
   height: 100px;
@@ -582,93 +604,100 @@ fieldset {
   justify-content: center;
   align-items: center;
 }
+
 .executeJsonBtn {
   border-radius: 30px !important;
 }
-.calenderContainer{
+
+.calenderContainer {
   width: auto;
   height: auto;
-  /* border: 2px solid; */
   position: absolute;
   right: 10px;
   top: 91px;
 }
+
 .react-calendar__navigation button {
   all: unset;
-color: #333;
-text-align: center;
+  color: #333;
+  text-align: center;
 }
-.react-calendar button{
+
+.react-calendar button {
   all: unset;
   text-align: center;
   padding: 2px;
-
   border-radius: 10px;
 }
-.react-calendar__tile--now{
+
+.react-calendar__tile--now {
   color: white !important;
   background-color: #d9534f !important;
 
 }
-.react-calendar{
+
+.react-calendar {
   width: 300px !important;
   font: inherit !important;
-  border: 1px solid #e5e5e5!important;
+  border: 1px solid #e5e5e5 !important;
   background-color: whitesmoke !important;
   border-radius: 10px;
   padding: 10px !important;
 }
-.graphContainer{
+
+.graphContainer {
   width: 100%;
   height: 74vh;
   overflow: auto;
 }
-.frame3{
+
+.frame3 {
   width: 100%;
   height: 100vh;
 }
-.frameContainer{
+
+.frameContainer {
   width: 100%;
   height: 70vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border: 2px solid black; */
 }
-.frame1{
+
+.frame1 {
   width: 60%;
   height: 100%;
-  /* border: 2px solid red; */
 }
-.frame2{
+
+.frame2 {
   width: 40%;
   height: 100%;
-  /* border: 2px solid red; */
 }
-.css-15okvyg{
+
+.css-15okvyg {
   display: none !important;
 }
 
-.frameContent{
+.frameContent {
   width: 100%;
-    height: 100vh;
-    margin-top: -60px;
+  height: 100vh;
+  margin-top: -60px;
 }
-.overlayDiv1{
-    width: 686px;
-    height: 36px;
-    position: absolute;
-    top: 71px;
-    background-color: white;
-    left: 10px;
-    /* z-index: -1; */
+
+.overlayDiv1 {
+  width: 686px;
+  height: 36px;
+  position: absolute;
+  top: 71px;
+  background-color: white;
+  left: 10px;
 }
-.overlayDiv2{
+
+.overlayDiv2 {
   width: 50px;
   height: 36px;
   right: 10px;
   position: absolute;
   background-color: white;
-  top:71px;
-  /* border: 2px solid red; */
+  top: 71px;
 }

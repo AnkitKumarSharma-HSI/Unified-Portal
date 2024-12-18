@@ -1,3 +1,4 @@
+// Author: Ankit Kumar Sharma
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UserService from "../service/UserService";
@@ -14,13 +15,13 @@ function UpdateUser() {
   });
 
   useEffect(() => {
-    fetchUserDataById(userId); // Pass the userId to fetchUserDataById
-  }, [userId]); //wheen ever there is a chane in userId, run this
+    fetchUserDataById(userId);
+  }, [userId]);
 
   const fetchUserDataById = async (userId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await UserService.getUserById(userId, token); // Pass userId to getUserById
+      const response = await UserService.getUserById(userId, token);
       const { name, email, role, city } = response.ourUsers;
       setUserData({ name, email, role, city });
     } catch (error) {
@@ -100,5 +101,4 @@ function UpdateUser() {
     </div>
   );
 }
-
 export default UpdateUser;

@@ -1,12 +1,9 @@
+// Author: Ankit Kumar Sharma
 import axios from "axios";
-
 class UserService {
-  // static BASE_URL = "http://localhost:8080";
-  static  BASE_URL ="http://13.126.48.191:8080";
-  // static AWS_BASE_URL= "http://13.126.48.191:8080";
+  static BASE_URL = "http://13.126.48.191:8080";
 
   static async login(email, password) {
-    console.log("Login is called using the url "+UserService.BASE_URL);
     try {
       const response = await axios.post(`${UserService.BASE_URL}/auth/login`, {
         email,
@@ -14,7 +11,6 @@ class UserService {
       });
       return response.data;
     } catch (err) {
-      console.log("error while login "+err);
       throw err;
     }
   }
@@ -66,7 +62,6 @@ class UserService {
   }
   static async fileUpload(formData, token) {
     try {
-      // Send the file to the backend (Spring Boot API)
       const response = await axios.post(
         `${UserService.BASE_URL}/api/upload/json`,
         formData,
@@ -77,14 +72,9 @@ class UserService {
           },
         }
       );
-
-      // Handle response (success)
       alert("File Uploaded Successfully.");
-      console.log(response.data);
       return "200";
     } catch (error) {
-      // Handle error
-      console.error("Error uploading the file", error);
       alert("File upload failed");
     }
   }
@@ -101,32 +91,29 @@ class UserService {
         }
       );
       alert("Schedule added Successfully.");
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.log("Error while adding schedule", error);
       alert("Add Schedule Failed");
     }
   }
-  static async stopResumeScheduleForScenario(formData,token){
-    try{
-      const response=await axios.post( `${UserService.BASE_URL}/api/schedule/stop-resume`,
+  static async stopResumeScheduleForScenario(formData, token) {
+    try {
+      const response = await axios.post(
+        `${UserService.BASE_URL}/api/schedule/stop-resume`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        });
-        return response;
-
-    }catch(error){
-      console.log("Error while stopping/resuming schedule",error);
+        }
+      );
+      return response;
+    } catch (error) {
       alert("Stop Scenario Failed!!");
     }
   }
   static async executeJson(userId, token) {
-    console.log(userId + " " + token);
     try {
       const response = await axios.get(
         `${UserService.BASE_URL}/api/executejson/${userId}`,
@@ -136,7 +123,6 @@ class UserService {
       );
       return response;
     } catch (error) {
-      console.log("Error while fetching json data", error);
       alert("Json Execution Failed");
     }
   }
@@ -150,7 +136,6 @@ class UserService {
       );
       return response;
     } catch (error) {
-      console.log("Error while fetching json data", error);
       alert("Json fetch failed");
     }
   }
@@ -197,8 +182,6 @@ class UserService {
       throw err;
     }
   }
-
-  /**AUTHENTICATION CHECKER */
   static logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
